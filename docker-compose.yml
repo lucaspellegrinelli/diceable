@@ -1,0 +1,46 @@
+version: "3.8"
+
+networks:
+  local:
+    driver: bridge
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server --requirepass password
+    ports:
+      - 6379:6379
+
+  bot:
+    build:
+      context: ./discordbot
+      dockerfile: Dockerfile.dev
+    container_name: bot
+    command: python main.py
+    depends_on:
+      - redis
+    environment:
+      - REDISHOST=redis
+      - REDISPASSWORD=password
+      - REDISPORT=6379
+      - REDISUSER=default
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    command: npm run dev -- --host
+    depends_on:
+      - redis
+    ports:
+      - 3000:3000
+    environment:
+      - REDISHOST=redis
+      - REDISPASSWORD=password
+      - REDISPORT=6379
+      - REDISUSER=default
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules

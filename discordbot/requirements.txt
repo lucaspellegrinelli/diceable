@@ -1,0 +1,6 @@
+asyncio
+discord.py
+requests
+python-dotenv
+redis
+Pillow

@@ -1,0 +1,29 @@
+FROM node:16-alpine
+
+ARG REDISHOST
+ARG REDISPORT
+ARG REDISPASSWORD
+ARG REDISUSER
+
+ENV REDISHOST=$REDISHOST
+ENV REDISPORT=$REDISPORT
+ENV REDISPASSWORD=$REDISPASSWORD
+ENV REDISUSER=$REDISUSER
+
+WORKDIR /app
+
+COPY package*.json /app
+
+RUN npm install
+RUN npm install dotenv
+
+COPY . .
+RUN rm .env
+
+RUN npm run sync
+RUN npm run build
+
+ENV PORT=3000
+
+EXPOSE 3000
+CMD ["node", "-r", "dotenv/config", "server.js"]

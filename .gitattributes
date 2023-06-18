@@ -1,0 +1,3 @@
+frontend/.env filter=git-crypt diff=git-crypt
+api/.env filter=git-crypt diff=git-crypt
+discordbot/.env filter=git-crypt diff=git-crypt
