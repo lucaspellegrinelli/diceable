@@ -1,23 +1,16 @@
 <script lang="ts">
-	import '../../app.postcss';
-
 	import { page } from '$app/stores';
 	import Configurations from './Configurations.svelte';
 	import Palettes from './Palettes.svelte';
 	import PlayerSkins from './PlayerSkins.svelte';
 	import type { PlayerSkin } from '$lib/types';
 
-	const DEFAULT_PALETTE_NAME = 'Default';
+	const INVALID_PALETTE_NAME = 'Unknown';
 	const DEFAULT_EFFECT_NAME = 'None';
 
 	export let data;
 
-	let palettes: Array<{ name: string; skin: string[] }> = [
-		{
-			name: DEFAULT_PALETTE_NAME,
-			skin: ['red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'green']
-		}
-	];
+	let palettes: Array<{ name: string; skin: string[] }> = [];
 	let playerSkins: Array<{ discordId: string; palette: string; effect: string }> = [];
 	let customColors = data.config.custom_colors === 'true';
 
@@ -26,7 +19,7 @@
 	}
 
 	for (const [key, value] of Object.entries(data.config.player_skins)) {
-		const playerPalette = value.palette || DEFAULT_PALETTE_NAME;
+		const playerPalette = value.palette || INVALID_PALETTE_NAME;
 		const playerEffect = value.effect || DEFAULT_EFFECT_NAME;
 		playerSkins = [
 			...playerSkins,
@@ -46,16 +39,18 @@
 			return;
 		}
 
-		const palettesDict = palettes.slice(1).reduce((acc: Record<string, string[]>, palette) => {
+		const palettesDict = palettes.reduce((acc: Record<string, string[]>, palette) => {
 			acc[palette.name] = palette.skin;
 			return acc;
 		}, {});
 
 		const playerSkinsDict = playerSkins.reduce((acc: Record<string, PlayerSkin>, playerSkin) => {
-			acc[playerSkin.discordId] = {
-				palette: playerSkin.palette === DEFAULT_PALETTE_NAME ? undefined : playerSkin.palette,
-				effect: playerSkin.effect === DEFAULT_EFFECT_NAME ? undefined : playerSkin.effect
-			};
+			if (playerSkin.palette !== INVALID_PALETTE_NAME) {
+				acc[playerSkin.discordId] = {
+					palette: playerSkin.palette,
+					effect: playerSkin.effect === DEFAULT_EFFECT_NAME ? undefined : playerSkin.effect
+				};
+			}
 			return acc;
 		}, {});
 

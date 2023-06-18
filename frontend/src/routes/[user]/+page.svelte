@@ -1,7 +1,6 @@
 <script>
 	// @ts-nocheck
 	import { io } from '$lib/webSocketConnection';
-	import { assetMessageParser } from '$lib/assetMessageParser';
 	import { getDicePositions } from '$lib/dicePositionCalculator';
 	import { onMount } from 'svelte';
 

@@ -18,3 +18,25 @@ export type PageServerLoadData = {
 	dice: string[];
 	session: Session | null;
 };
+
+type CloudflareImageInfo = {
+    filename: string;
+    id: string;
+};
+
+export type CloudflareImageResponse = {
+    result: {
+        images: CloudflareImageInfo[];
+    };
+};
+
+type CloudflareVideoInfo = {
+    meta: {
+        filename: string;
+    };
+    uid: string;
+};
+
+export type CloudflareVideoResponse = {
+    result: CloudflareVideoInfo[];
+};

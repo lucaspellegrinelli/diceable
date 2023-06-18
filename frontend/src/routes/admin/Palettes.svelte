@@ -4,7 +4,7 @@
 
 	const createNewPalette = (name: string) => ({
 		name: name,
-		skin: ['red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'green']
+		skin: Array(10).fill(diceSkinOptions[0])
 	});
 
 	const addNewPalette = () => {
@@ -41,7 +41,6 @@
 			class="input input-bordered w-52"
 			placeholder="Palette name"
 			bind:value={palette.name}
-			disabled={paletteIndex === 0}
 		/>
 		<div class="flex-grow">
 			<div class="flex">
@@ -73,7 +72,6 @@
 			on:click={() => {
 				palettes = palettes.filter((_, i) => i !== paletteIndex);
 			}}
-			disabled={paletteIndex === 0}
 			class="btn btn-error ml-2"
 		>
 			<svg

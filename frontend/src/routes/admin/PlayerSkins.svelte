@@ -4,7 +4,7 @@
 	export let effectOptions: string[];
 
 	const addNewPlayerSkin = () => {
-		const newPlayerSkin = { discordId: '', palette: 'Default', effect: 'None' };
+		const newPlayerSkin = { discordId: '', palette: palettes[0].name, effect: 'None' };
 		playerSkins = [...playerSkins, newPlayerSkin];
 	};
 

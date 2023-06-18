@@ -1,15 +1,5 @@
 import { env } from '$env/dynamic/private';
-
-type CloudflareImageInfo = {
-    filename: string;
-    id: string;
-};
-
-type CloudflareImageResponse = {
-    result: {
-        images: CloudflareImageInfo[];
-    };
-};
+import type { CloudflareImageResponse } from '$lib/types';
 
 export async function GET({ url }) {
     const imagesEndpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/images/v2`;
