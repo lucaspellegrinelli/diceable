@@ -3,7 +3,6 @@
 	import { Input, Dropdown, DropdownItem, Tooltip, Button, Heading } from 'flowbite-svelte';
 
 	export let palettes: Array<{ name: string; skin: string[] }>;
-	export let formErrors: { [key: string]: boolean };
 	export let diceSkinOptions: string[];
 
 	const createNewPalette = (name: string) => ({
@@ -30,6 +29,7 @@
 			class="w-72 mr-1"
 			placeholder="Palette name"
 			bind:value={palette.name}
+			color={palette.name ? 'base' : 'red'}
 		/>
 		<Tooltip>Palette name</Tooltip>
 
