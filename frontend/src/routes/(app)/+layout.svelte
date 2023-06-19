@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import '../../app.css';
 	import { DarkMode } from 'flowbite-svelte';
 	import ToastHandler from '$lib/ToastHandler.svelte';
 	let darkmodebtn =

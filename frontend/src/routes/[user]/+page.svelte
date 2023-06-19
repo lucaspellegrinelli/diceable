@@ -167,6 +167,13 @@
 </div>
 
 <style>
+    :global(body) {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: transparent;
+    }
+
 	#dice {
 		width: 1920px;
 		height: 1080px;
