@@ -1,29 +1,29 @@
 <script lang="ts">
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
-	import { Button, Modal } from 'flowbite-svelte';
+	import { Button, Heading, Modal, P } from 'flowbite-svelte';
 	import Icon from '@iconify/svelte';
 
 	let signOutModal = false;
 </script>
 
-<div class="bg-gray-100">
-	<div class="flex flex-col justify-center items-center h-screen">
-		<h1 class="text-4xl font-bold text-gray-800 mb-6">Diceable</h1>
-		<p class="text-gray-600 text-lg mb-8">
-			Discord bot to roll dice in Discord and OBS simultaneously
-		</p>
+<div class="flex h-screen justify-center items-center text-center">
+	<div>
+		<Heading tag="h1" class="mb-4" customSize="text-4xl font-extrabold  md:text-5xl lg:text-6xl">
+			Diceable
+		</Heading>
+		<P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+			Discord bot to roll dice in Discord and OBS simultaneously.
+		</P>
 		{#if $page.data.session}
-			<div class="flex space-x-4">
-				<Button color="blue" href="/admin" pill>
-					Go to dashboard
-					<Icon icon="mdi:wrench" class="ml-2" />
-				</Button>
-				<Button color="red" on:click={() => (signOutModal = true)} pill>
-					Sign out
-					<Icon icon="fa-solid:sign-out-alt" class="ml-2" />
-				</Button>
-			</div>
+			<Button color="blue" href="/admin" pill>
+				Go to dashboard
+				<Icon icon="mdi:wrench" class="ml-2" />
+			</Button>
+			<Button color="red" on:click={() => (signOutModal = true)} pill>
+				Sign out
+				<Icon icon="fa-solid:sign-out-alt" class="ml-2" />
+			</Button>
 		{:else}
 			<Button color="blue" on:click={() => signIn('discord')} pill>
 				Sign in with Discord
