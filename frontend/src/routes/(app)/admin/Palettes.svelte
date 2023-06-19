@@ -22,11 +22,7 @@
 
 	const setDefaultPalette = (paletteIndex: number) => {
 		palettes = palettes.map((palette, index) => {
-			if (index === paletteIndex) {
-				palette.default = true;
-			} else {
-				palette.default = false;
-			}
+            palette.default = index === paletteIndex;
 			return palette;
 		});
 	};
