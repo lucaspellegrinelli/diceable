@@ -1,26 +1,5 @@
 import { env } from '$env/dynamic/private';
-
-type CloudflareImageInfo = {
-    filename: string;
-    id: string;
-};
-
-type CloudflareVideoInfo = {
-    meta: {
-        filename: string;
-    };
-    uid: string;
-};
-
-type CloudflareVideoResponse = {
-    result: CloudflareVideoInfo[];
-};
-
-type CloudflareImageResponse = {
-    result: {
-        images: CloudflareImageInfo[];
-    };
-};
+import type { CloudflareImageResponse, CloudflareVideoResponse } from '$lib/types';
 
 const getCloudflareImageUrl = (id: string) =>
     `https://imagedelivery.net/qzTQhwVAd5ZPCy9exIQX3g/${id}/public`;

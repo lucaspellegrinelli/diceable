@@ -46,5 +46,5 @@ export async function POST({ params, request }) {
     };
 
     await redisClient.hSet('user-configs', userUUID, JSON.stringify(newConfig));
-    return new Response();
+    return new Response(JSON.stringify(newConfig));
 }

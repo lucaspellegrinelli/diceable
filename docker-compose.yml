@@ -43,4 +43,3 @@ services:
       - REDISUSER=default
     volumes:
       - ./frontend:/app
-      - /app/node_modules

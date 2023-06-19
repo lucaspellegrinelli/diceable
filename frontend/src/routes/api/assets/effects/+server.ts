@@ -1,15 +1,5 @@
 import { env } from '$env/dynamic/private';
-
-type CloudflareVideoInfo = {
-    meta: {
-        filename: string;
-    };
-    uid: string;
-};
-
-type CloudflareVideoResponse = {
-    result: CloudflareVideoInfo[];
-};
+import type { CloudflareVideoResponse } from '$lib/types';
 
 export async function GET({ url }) {
     const videosEndpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/stream`;
