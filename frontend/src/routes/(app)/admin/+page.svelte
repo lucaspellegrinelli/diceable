@@ -105,15 +105,15 @@
 	<div class="container mx-auto mt-6">
 		<Configurations bind:customColors />
 
-		<Hr class="my-8" height="h-px" />
+		<Hr class="my-8" height="h-px" style="z-index: -99" />
 
 		<Palettes bind:palettes diceSkinOptions={data.dice} />
 
-		<Hr class="my-8" height="h-px" />
+		<Hr class="my-8" height="h-px" style="z-index: -99" />
 
 		<PlayerSkins {palettes} bind:playerSkins effectOptions={data.effects} />
 
-		<Hr class="my-8" height="h-px" />
+		<Hr class="my-8" height="h-px" style="z-index: -99" />
 
 		<Button class="w-48" on:click={saveData}>
 			{#if isSubmitting}
