@@ -35,8 +35,9 @@
 			class="mr-1"
 			placeholder="Discord ID"
 			bind:value={playerSkin.discordId}
+			color={playerSkin.discordId ? 'base' : 'red'}
 		/>
-        <Tooltip>Discord ID of the player</Tooltip>
+		<Tooltip>Discord ID of the player</Tooltip>
 
 		<Input
 			label="Description"
@@ -44,9 +45,14 @@
 			placeholder="Description"
 			bind:value={playerSkin.description}
 		/>
-        <Tooltip>Just a description for you to remember who is who</Tooltip>
+		<Tooltip>Just a description for you to remember who is who</Tooltip>
 
-		<Button color="light">{playerSkin.palette}</Button>
+		<Button
+			outline={!palettes.find((p) => p.name === playerSkin.palette)}
+			color={palettes.find((p) => p.name === playerSkin.palette) ? 'light' : 'red'}
+		>
+			{playerSkin.palette}
+		</Button>
 		<Dropdown>
 			{#each palettes as palette}
 				<DropdownItem on:click={choosePalette(playerIndex, palette.name)}>
@@ -72,7 +78,7 @@
 		>
 			<Icon icon="typcn:delete" class="text-xl inline-block" />
 		</Button>
-        <Tooltip>Delete player skin</Tooltip>
+		<Tooltip>Delete player skin</Tooltip>
 	</div>
 {/each}
 
