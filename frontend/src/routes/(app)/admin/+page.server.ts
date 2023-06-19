@@ -52,6 +52,7 @@ export const actions = {
         const customColors = data.get('custom_colors');
         const palettes = JSON.parse(data.get('palettes') || '{}');
         const playerSkins = JSON.parse(data.get('player_skins') || '{}');
+        const defaultPalette = data.get('default_palette');
 
         const response = await event.fetch(`/api/config/${user}`, {
             method: 'POST',
@@ -61,7 +62,8 @@ export const actions = {
             body: JSON.stringify({
                 custom_colors: customColors,
                 palettes: palettes,
-                player_skins: playerSkins
+                player_skins: playerSkins,
+                default_palette: defaultPalette
             })
         });
 
