@@ -12,14 +12,15 @@
 
 	export let data;
 
-	let palettes: Array<{ name: string; skin: string[] }> = [];
+	let palettes: Array<{ name: string; skin: string[]; default: boolean }> = [];
 	let playerSkins: Array<PlayerSkin> = [];
 	let customColors = data.config.custom_colors === 'true';
 
 	let isSubmitting = false;
 
 	for (const [key, value] of Object.entries(data.config.palettes)) {
-		palettes = [...palettes, { name: key, skin: value }];
+		const isDefault = key === data.config.default_palette;
+		palettes = [...palettes, { name: key, skin: value, default: isDefault }];
 	}
 
 	for (const [key, value] of Object.entries(data.config.player_skins)) {
@@ -51,6 +52,9 @@
 			const identifier = playerWithInvalidPalette.description || playerWithInvalidPalette.discordId;
 			return `Player "${identifier}" has an invalid palette`;
 		}
+
+		const isThereDefaultPalette = palettes.some((palette) => palette.default);
+		if (!isThereDefaultPalette) return 'There must be a default palette';
 	};
 
 	const saveData = () => {
@@ -77,10 +81,13 @@
 			return acc;
 		}, {});
 
+        const defaultPalette = palettes.find((palette) => palette.default)!;
+
 		const formData = new FormData();
 		formData.append('user', data.user);
 		formData.append('custom_colors', customColors ? 'true' : 'false');
 		formData.append('palettes', JSON.stringify(palettesDict));
+        formData.append('default_palette', defaultPalette.name);
 		formData.append('player_skins', JSON.stringify(playerSkinsDict));
 
 		isSubmitting = true;

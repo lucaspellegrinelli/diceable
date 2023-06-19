@@ -2,12 +2,13 @@
 	import Icon from '@iconify/svelte';
 	import { Input, Dropdown, DropdownItem, Tooltip, Button, Heading } from 'flowbite-svelte';
 
-	export let palettes: Array<{ name: string; skin: string[] }>;
+	export let palettes: Array<{ name: string; skin: string[]; default: boolean }>;
 	export let diceSkinOptions: string[];
 
 	const createNewPalette = (name: string) => ({
 		name: name,
-		skin: Array(10).fill(diceSkinOptions[0])
+		skin: Array(10).fill(diceSkinOptions[0]),
+		default: palettes.length === 0
 	});
 
 	const addNewPalette = () => {
@@ -17,6 +18,17 @@
 
 	const chooseSkin = (paletteIndex: number, skinIndex: number, skinName: string): any => {
 		palettes[paletteIndex].skin[skinIndex] = skinName;
+	};
+
+	const setDefaultPalette = (paletteIndex: number) => {
+		palettes = palettes.map((palette, index) => {
+			if (index === paletteIndex) {
+				palette.default = true;
+			} else {
+				palette.default = false;
+			}
+			return palette;
+		});
 	};
 </script>
 
@@ -33,7 +45,7 @@
 		/>
 		<Tooltip>Palette name</Tooltip>
 
-		<div class="grid w-full gap-1 grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
+		<div class="grid w-full gap-1 grid-cols-4 md:grid-cols-6 lg:grid-cols-12">
 			{#each palette.skin as skinName, skinIndex}
 				<Button color="light">{skinName}</Button>
 				<Dropdown>
@@ -44,6 +56,15 @@
 					{/each}
 				</Dropdown>
 			{/each}
+			<Button
+				color={palette.default ? 'green' : 'purple'}
+				on:click={() => setDefaultPalette(paletteIndex)}
+				disabled={palette.default}
+			>
+				<Icon icon="fluent:book-default-28-filled" class="text-xl inline-block" />
+			</Button>
+			<Tooltip>Set as default</Tooltip>
+
 			<Button
 				color="red"
 				on:click={() => {

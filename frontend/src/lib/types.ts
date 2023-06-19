@@ -16,6 +16,7 @@ export type PlayerSkin = {
 export type Config = {
     custom_colors: string;
     palettes: { [key: string]: string[] };
+    default_palette: string;
     player_skins: { [key: string]: PlayerSkin };
 };
 

@@ -19,25 +19,6 @@ intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-DEFAULT_PALETTE = [
-    "red",
-    "green",
-    "blue",
-    "blue",
-    "blue",
-    "blue",
-    "blue",
-    "blue",
-    "blue",
-    "blue",
-]
-
-DEFAULT_CONFIG = {
-    "custom_colors": "false",
-    "palettes": {},  # { "PALETTE_NAME": ["color", "color", ...] }
-    "player_skins": {},  # { "DISCORD_ID": { "palette": None, "effect": None } }
-}
-
 redis_client = None
 dice_cdn_urls = None
 
@@ -72,10 +53,15 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
 
     server_config = json.loads(server_config)
 
+    custom_colors = server_config.get("custom_colors") == "true"
+    default_palette = server_config.get("default_palette", None)
     player_skin = server_config["player_skins"].get(user_id, {})
     palette_name = player_skin.get("palette", None)
     effect_name = player_skin.get("effect", None)
-    palette = server_config["palettes"].get(palette_name, DEFAULT_PALETTE)
+
+    palette = server_config["palettes"].get(default_palette)
+    if custom_colors:
+        palette = server_config["palettes"].get(palette_name, default_palette)
 
     rolled_dice = [random.randint(1, 10) for _ in range(amount)]
     rolled_dice = sorted(rolled_dice, key=lambda x: x if x > 0 else 999)

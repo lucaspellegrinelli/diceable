@@ -6,10 +6,15 @@ type UserConfig = {
     player_skins: { [key: string]: { palette: string, effect: string } }
 };
 
-const get_default_config = () => (JSON.stringify({
+const get_default_config = (userUUID: string) => (JSON.stringify({
     "custom_colors": "false",
-    "palettes": {}, // { "PALETTE_NAME": ["color", "color", ...] }
-    "player_skins": {}, // { "DISCORD_ID": { "palette": None, "effect": None } }
+    "palettes": {
+        "Default": ["red", "indigo", "indigo", "indigo", "indigo", "indigo", "indigo", "indigo", "indigo", "green"]
+    },
+    "player_skins": {
+        userUUID: { "palette": "Default" }
+    },
+    "default_palette": "Default"
 }));
 
 export async function GET({ params }) {
@@ -28,7 +33,8 @@ export async function POST({ params, request }) {
         userConfig = await redisClient.hGet('user-configs', userUUID);
     }
 
-    const currentConfig: UserConfig = JSON.parse(userConfig || get_default_config());
+    const defaultConfig = get_default_config(userUUID);
+    const currentConfig: UserConfig = JSON.parse(userConfig || defaultConfig);
 
     // Remove any palettes that don't exist
     const palettes = Object.keys(config.palettes);
