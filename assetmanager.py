@@ -82,7 +82,6 @@ def upload_dice_skin(
     images_endpoint = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1"
     headers = {
         "Authorization": f"Bearer {cloudflare_assets_api_token}",
-        "Content-Type": "application/json",
     }
 
     for file in os.listdir(dir):
@@ -90,17 +89,16 @@ def upload_dice_skin(
             continue
 
         print(f"Uploading {file}")
-        with open(os.path.join(dir, file), "rb") as f:
-            response = requests.post(
-                images_endpoint,
-                headers=headers,
-                files={"file": (file, f, "image/png")},
-            )
-            if response.status_code == 200:
-                print(f"Successfully uploaded {file}")
-            else:
-                print(f"Failed to upload {file}")
-                print(response.json())
+        response = requests.post(
+            images_endpoint,
+            headers=headers,
+            files={"file": open(os.path.join(dir, file), "rb")},
+        )
+        if response.status_code == 200:
+            print(f"Successfully uploaded {file}")
+        else:
+            print(f"Failed to upload {file} with status code {response.status_code}")
+            print(response.json())
 
 
 def upload_effect(
