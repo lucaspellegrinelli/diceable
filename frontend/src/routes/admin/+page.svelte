@@ -4,6 +4,8 @@
 	import Palettes from './Palettes.svelte';
 	import PlayerSkins from './PlayerSkins.svelte';
 	import type { PlayerSkin } from '$lib/types';
+	import { addToast } from '$lib/toasts';
+	import { Button, Hr, Spinner } from 'flowbite-svelte';
 
 	const INVALID_PALETTE_NAME = 'Unknown';
 	const DEFAULT_EFFECT_NAME = 'None';
@@ -11,8 +13,10 @@
 	export let data;
 
 	let palettes: Array<{ name: string; skin: string[] }> = [];
-	let playerSkins: Array<{ discordId: string; palette: string; effect: string }> = [];
+	let playerSkins: Array<PlayerSkin> = [];
 	let customColors = data.config.custom_colors === 'true';
+
+	let isSubmitting = false;
 
 	for (const [key, value] of Object.entries(data.config.palettes)) {
 		palettes = [...palettes, { name: key, skin: value }];
@@ -21,21 +25,38 @@
 	for (const [key, value] of Object.entries(data.config.player_skins)) {
 		const playerPalette = value.palette || INVALID_PALETTE_NAME;
 		const playerEffect = value.effect || DEFAULT_EFFECT_NAME;
+		const playerDescription = value.description || '';
 		playerSkins = [
 			...playerSkins,
-			{ discordId: key, palette: playerPalette, effect: playerEffect }
+			{
+				discordId: key,
+				description: playerDescription,
+				palette: playerPalette,
+				effect: playerEffect
+			}
 		];
 	}
 
-	const canSaveData = () => {
-		const existsEmptyDiscordId = playerSkins.some((playerSkin) => playerSkin.discordId === '');
-		const existsEmptyPaletteName = palettes.some((palette) => palette.name === '');
+	const getFormProblems = () => {
+		const emptyDiscordId = playerSkins.some((playerSkin) => playerSkin.discordId === '');
+		if (emptyDiscordId) return 'Discord ID cannot be empty';
 
-		return !existsEmptyDiscordId && !existsEmptyPaletteName;
+		const emptyPaletteName = palettes.some((palette) => palette.name === '');
+		if (emptyPaletteName) return 'Palette name cannot be empty';
+
+		const playerWithInvalidPalette = playerSkins.find((playerSkin) =>
+			palettes.every((palette) => palette.name !== playerSkin.palette)
+		);
+		if (playerWithInvalidPalette) {
+			const identifier = playerWithInvalidPalette.description || playerWithInvalidPalette.discordId;
+			return `Player "${identifier}" has an invalid palette`;
+		}
 	};
 
 	const saveData = () => {
-		if (!canSaveData()) {
+		const formProblems = getFormProblems();
+		if (formProblems) {
+			addToast(formProblems, 'error');
 			return;
 		}
 
@@ -47,6 +68,8 @@
 		const playerSkinsDict = playerSkins.reduce((acc: Record<string, PlayerSkin>, playerSkin) => {
 			if (playerSkin.palette !== INVALID_PALETTE_NAME) {
 				acc[playerSkin.discordId] = {
+					discordId: playerSkin.discordId,
+					description: playerSkin.description,
 					palette: playerSkin.palette,
 					effect: playerSkin.effect === DEFAULT_EFFECT_NAME ? undefined : playerSkin.effect
 				};
@@ -60,36 +83,46 @@
 		formData.append('palettes', JSON.stringify(palettesDict));
 		formData.append('player_skins', JSON.stringify(playerSkinsDict));
 
+		isSubmitting = true;
 		fetch(`/admin`, {
 			method: 'POST',
 			body: formData
 		})
 			.then(() => {
-				console.log('saved');
+				addToast('Saved successfully', 'success');
 			})
 			.catch((err) => {
+				addToast('Failed to save', 'error');
 				console.error(err);
+			})
+			.finally(() => {
+				isSubmitting = false;
 			});
 	};
 </script>
 
 {#if $page.data.session}
-	<div
-		class="hidden bg-red-400 hover:bg-red-500 bg-blue-400 hover:bg-blue-500 bg-green-400 hover:bg-green-500 bg-yellow-400 hover:bg-yellow-500 bg-orange-400 hover:bg-orange-500 bg-purple-400 hover:bg-purple-500 bg-gray-400 hover:bg-gray-500"
-	/>
-
 	<div class="container mx-auto mt-6">
 		<Configurations bind:customColors />
 
-		<div class="divider" />
+		<Hr class="my-8" height="h-px" />
 
 		<Palettes bind:palettes diceSkinOptions={data.dice} />
 
-		<div class="divider" />
+		<Hr class="my-8" height="h-px" />
 
 		<PlayerSkins {palettes} bind:playerSkins effectOptions={data.effects} />
 
-		<button class="btn btn-primary mt-1 text-white" on:click={saveData}>Save</button>
+		<Hr class="my-8" height="h-px" />
+
+		<Button class="w-48" on:click={saveData}>
+			{#if isSubmitting}
+				<Spinner class="mr-4" size="4" color="white" />
+				Saving...
+			{:else}
+				Save
+			{/if}
+		</Button>
 	</div>
 {:else}
 	<a href="/auth/signin" class="btn btn-primary" data-sveltekit-preload-data="off">Sign in</a>

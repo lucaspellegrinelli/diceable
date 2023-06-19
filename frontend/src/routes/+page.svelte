@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
+	import { Button, Modal } from 'flowbite-svelte';
+	import Icon from '@iconify/svelte';
+
+	let signOutModal = false;
 </script>
 
 <div class="bg-gray-100">
@@ -11,26 +15,31 @@
 		</p>
 		{#if $page.data.session}
 			<div class="flex space-x-4">
-				<a
-					href="/admin"
-					class="px-6 py-3 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600 transition-colors duration-300"
-				>
-					Go to Dashboard
-				</a>
-				<button
-					class="px-6 py-3 bg-red-500 text-white rounded-full shadow hover:bg-red-600 transition-colors duration-300"
-					on:click={() => signOut()}
-				>
-					Sign Out
-				</button>
+				<Button color="blue" href="/admin" pill>
+					Go to dashboard
+					<Icon icon="mdi:wrench" class="ml-2" />
+				</Button>
+				<Button color="red" on:click={() => (signOutModal = true)} pill>
+					Sign out
+					<Icon icon="fa-solid:sign-out-alt" class="ml-2" />
+				</Button>
 			</div>
 		{:else}
-			<button
-				class="px-6 py-3 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600 transition-colors duration-300"
-				on:click={() => signIn("discord")}
-			>
+			<Button color="blue" on:click={() => signIn('discord')} pill>
 				Sign in with Discord
-			</button>
+				<Icon icon="mdi:discord" class="ml-2" />
+			</Button>
 		{/if}
 	</div>
 </div>
+
+<Modal bind:open={signOutModal} size="xs" autoclose>
+	<div class="text-center">
+		<Icon icon="mdi:run" class="m-auto text-6xl mb-4" />
+		<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+			Are you sure you want to sign out?
+		</h3>
+		<Button color="red" class="mr-2" on:click={() => signOut()}>Yes, I want to sign out</Button>
+		<Button color="alternative">No, keep me signed in</Button>
+	</div>
+</Modal>

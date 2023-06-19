@@ -1,12 +1,9 @@
 <script lang="ts">
+	import { Heading, Toggle } from 'flowbite-svelte';
+
 	export let customColors: boolean;
 </script>
 
-<h1 class="text-4xl font-bold mb-4">Configurations</h1>
+<Heading class="mb-6" tag="h2">configurations</Heading>
 
-<div class="flex">
-	<label class="cursor-pointer label">
-		<span class="label-text mr-4">Custom Colors</span>
-		<input type="checkbox" class="checkbox" bind:checked={customColors} />
-	</label>
-</div>
+<Toggle bind:checked={customColors}>Custom Colors</Toggle>

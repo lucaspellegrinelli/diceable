@@ -1,5 +1,9 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+	import { Input, Dropdown, DropdownItem, Tooltip, Button, Heading } from 'flowbite-svelte';
+
 	export let palettes: Array<{ name: string; skin: string[] }>;
+	export let formErrors: { [key: string]: boolean };
 	export let diceSkinOptions: string[];
 
 	const createNewPalette = (name: string) => ({
@@ -15,81 +19,42 @@
 	const chooseSkin = (paletteIndex: number, skinIndex: number, skinName: string): any => {
 		palettes[paletteIndex].skin[skinIndex] = skinName;
 	};
-
-	const backgroundFromSkin = (skin: string) => {
-		const tailwindColor: Record<string, string> = {
-			red: 'red',
-			blue: 'blue',
-			green: 'green',
-			yellow: 'yellow',
-			orange: 'orange',
-			purple: 'purple',
-			gray: 'gray'
-		};
-
-		const color = tailwindColor[skin] || 'gray';
-		return `bg-${color}-400 hover:bg-${color}-500`;
-	};
 </script>
 
-<h1 class="text-4xl font-bold my-4">Palettes</h1>
+<Heading class="mb-4" tag="h2">palettes</Heading>
 
 {#each palettes as palette, paletteIndex}
-	<div class="flex items-center">
-		<input
-			type="text"
-			class="input input-bordered w-52"
+	<div class="flex items-center my-2">
+		<Input
+			label="Palette name"
+			class="w-72 mr-1"
 			placeholder="Palette name"
 			bind:value={palette.name}
 		/>
-		<div class="flex-grow">
-			<div class="flex">
-				{#each palette.skin as skinName, skinIndex}
-					<div class="dropdown flex-1 mx-1">
-						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label tabindex="0" class="m-1 btn btn-block {backgroundFromSkin(skinName)} text-white"
-							>{skinName}</label
-						>
-						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-						<ul
-							tabindex="0"
-							class="z-50 p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52"
-						>
-							{#each diceSkinOptions as diceSkinName}
-								<li>
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a on:click={chooseSkin(paletteIndex, skinIndex, diceSkinName)}>{diceSkinName}</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/each}
-			</div>
-		</div>
-		<button
-			on:click={() => {
-				palettes = palettes.filter((_, i) => i !== paletteIndex);
-			}}
-			class="btn btn-error ml-2"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-6 w-6"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
+		<Tooltip>Palette name</Tooltip>
+
+		<div class="grid w-full gap-1 grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
+			{#each palette.skin as skinName, skinIndex}
+				<Button color="light">{skinName}</Button>
+				<Dropdown>
+					{#each diceSkinOptions as diceSkinName}
+						<DropdownItem on:click={chooseSkin(paletteIndex, skinIndex, diceSkinName)}>
+							{diceSkinName}
+						</DropdownItem>
+					{/each}
+				</Dropdown>
+			{/each}
+			<Button
+				color="red"
+				on:click={() => {
+					palettes = palettes.filter((_, index) => index !== paletteIndex);
+				}}
 			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M6 18L18 6M6 6l12 12"
-				/>
-			</svg>
-		</button>
+				<Icon icon="typcn:delete" class="text-xl inline-block" />
+			</Button>
+			<Tooltip>Delete palette</Tooltip>
+		</div>
 	</div>
 {/each}
 
-<button class="btn btn-success mt-1 text-white" on:click={addNewPalette}>Add new palette</button>
+<Button color="blue" on:click={addNewPalette}>add new palette</Button>
