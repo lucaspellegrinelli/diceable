@@ -16,7 +16,6 @@ def _dice_url(type: str, skin: str, number: int):
 
 
 def _load_dice_image(number: int, skin: str):
-    # cdn_url = dice_cdn_urls[skin][number]
     cdn_url = _dice_url("d10", skin, number)
     response = requests.get(cdn_url)
 

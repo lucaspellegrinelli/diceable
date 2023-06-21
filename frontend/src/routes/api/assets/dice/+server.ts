@@ -1,23 +1,25 @@
 import { env } from '$env/dynamic/private';
-import type { CloudflareImageResponse } from '$lib/types';
+import { listObjects } from '$lib/s3Connection';
 
 export async function GET({ url }) {
-    const imagesEndpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/images/v2`;
-
-    const headers = {
-        Authorization: `Bearer ${env.CLOUDFLARE_ASSETS_API_TOKEN}`,
-        'Content-Type': 'application/json'
+    const params = {
+        Bucket: env.S3_BUCKET,
+        Prefix: 'dice/'
     };
 
+    const s3Response = await listObjects(params.Bucket, params.Prefix);
+
     const diceNames = new Set();
+    if (s3Response.Contents) {
+        for (const diceInfo of s3Response.Contents) {
+            if (!diceInfo.Key) {
+                continue;
+            }
 
-    const response = await fetch(imagesEndpoint, { headers });
-    const responseJson: CloudflareImageResponse = await response.json();
-    const allImages = responseJson.result.images;
-
-    for (const diceInfo of allImages) {
-        const diceName = diceInfo.filename.split('-')[0];
-        diceNames.add(diceName);
+            const splittedPath = diceInfo.Key.split('/');
+            const diceName = splittedPath[splittedPath.length - 2];
+            diceNames.add(diceName);
+        }
     }
 
     return new Response(JSON.stringify(Array.from(diceNames)));
