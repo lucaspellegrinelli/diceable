@@ -111,7 +111,7 @@
 			}
 
 			let diceSkinLoadedCount = 0;
-			let effectLoaded = !!effect;
+			let effectLoaded = !effect;
 
 			const onEverythingLoaded = () => {
                 if (effect) {
