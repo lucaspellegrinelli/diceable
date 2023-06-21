@@ -8,7 +8,6 @@ import discord
 import redis
 from discord import app_commands
 from dotenv import load_dotenv
-from src.cloudflare import get_dice_cdn_urls
 from src.gifgenerator import create_roll_gif
 
 load_dotenv()
@@ -20,7 +19,6 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 redis_client = None
-dice_cdn_urls = None
 
 
 def _generate_roll_message(rolled_dice, modifier):
@@ -78,7 +76,7 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
     redis_client.publish("rolls", json.dumps(pub_content))
     await _repond_interaction(interaction, "Rolling dice...")
 
-    gif_path = create_roll_gif(rolled_dice, palette, 16, dice_cdn_urls, "rolls")
+    gif_path = create_roll_gif(rolled_dice, palette, 16, "rolls")
     roll_str = _generate_roll_message(rolled_dice, modifier)
 
     channel = interaction.channel
@@ -132,11 +130,6 @@ async def on_ready():
 
 if __name__ == "__main__":
     load_dotenv()
-
-    dice_cdn_urls = get_dice_cdn_urls(
-        cloudflare_account_id=os.getenv("CLOUDFLARE_ACCOUNT_ID"),
-        cloudflare_assets_api_token=os.getenv("CLOUDFLARE_ASSETS_API_TOKEN"),
-    )
 
     redis_client = redis.Redis(
         host=os.getenv("REDISHOST"),

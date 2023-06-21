@@ -11,8 +11,13 @@ from .common import DICE_H, DICE_W, OUTPUT_H, OUTPUT_W, get_dice_positions
 dice_cache = {}
 
 
-def _load_dice_image(number: int, skin: str, dice_cdn_urls: dict[str, dict[int, str]]):
-    cdn_url = dice_cdn_urls[skin][number]
+def _dice_url(type: str, skin: str, number: int):
+    return f"https://assets.togarashi.app/dice/{type}/{skin}/{number}.png"
+
+
+def _load_dice_image(number: int, skin: str):
+    # cdn_url = dice_cdn_urls[skin][number]
+    cdn_url = _dice_url("d10", skin, number)
     response = requests.get(cdn_url)
 
     img = Image.open(BytesIO(response.content))
@@ -26,10 +31,10 @@ def _load_dice_image(number: int, skin: str, dice_cdn_urls: dict[str, dict[int, 
     return img
 
 
-def _load_dice_palette(palette: list[str], dice_cdn_urls: dict[str, dict[int, str]]):
+def _load_dice_palette(palette: list[str]):
     dice_images = []
     for i, skin in enumerate(palette):
-        dice_img = _load_dice_image(i, skin, dice_cdn_urls)
+        dice_img = _load_dice_image(i, skin)
         dice_images.append(dice_img)
 
     return dice_images
@@ -39,9 +44,8 @@ def _create_rolls_animation(
     rolls: list[int],
     palette: list[str],
     n_frames: int,
-    dice_cdn_urls: dict[str, dict[int, str]],
 ):
-    colored_dice = _load_dice_palette(palette, dice_cdn_urls)
+    colored_dice = _load_dice_palette(palette)
     dice_positions = get_dice_positions(
         len(rolls), DICE_W, DICE_H, DICE_W, DICE_H, OUTPUT_W, OUTPUT_H, 0, 0
     )
@@ -64,10 +68,9 @@ def create_roll_gif(
     rolls: list[int],
     palette: list[str],
     n_frames: int,
-    dice_cdn_urls: dict[str, dict[int, str]],
     save_path: str,
 ):
-    anim = _create_rolls_animation(rolls, palette, n_frames, dice_cdn_urls)
+    anim = _create_rolls_animation(rolls, palette, n_frames)
 
     roll_id = str(uuid.uuid4())
     path = os.path.join(save_path, f"roll-{roll_id}.gif")
