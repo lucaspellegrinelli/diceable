@@ -27,9 +27,6 @@
 		let hideTimeout = null;
 
 		const updateContent = async (rolls, palette, effect) => {
-			clearTimeout(hideTimeout);
-			clearContent();
-
 			const numberDice = rolls.length;
 
 			const parsedPalette = JSON.stringify(
@@ -70,6 +67,8 @@
 					}
 				};
 
+                clearContent();
+				clearTimeout(hideTimeout);
 				loopTimeout = setInterval(animate, animationDelay);
 				hideTimeout = setTimeout(clearContent, hideDelay);
 			};
@@ -115,10 +114,10 @@
 			let effectLoaded = !effect;
 
 			const onEverythingLoaded = () => {
-                if (effect) {
-                    const video = document.getElementById('roll-video');
-                    video.play();
-                }
+				if (effect) {
+					const video = document.getElementById('roll-video');
+					video.play();
+				}
 
 				for (let i = 0; i < rolls.length; i++) {
 					const roll = rolls[i] % palette.length;
