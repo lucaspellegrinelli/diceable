@@ -27,6 +27,8 @@
 		let hideTimeout = null;
 
 		const updateContent = async (rolls, palette, effect) => {
+			clearContent();
+
 			const numberDice = rolls.length;
 
 			const parsedPalette = JSON.stringify(
@@ -67,9 +69,9 @@
 					}
 				};
 
-                clearContent();
-				clearTimeout(hideTimeout);
 				loopTimeout = setInterval(animate, animationDelay);
+
+				clearTimeout(hideTimeout);
 				hideTimeout = setTimeout(clearContent, hideDelay);
 			};
 
