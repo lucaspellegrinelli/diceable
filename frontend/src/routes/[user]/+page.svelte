@@ -71,6 +71,7 @@
 				};
 
 				loopTimeout = setInterval(animate, animationDelay);
+				hideTimeout = setTimeout(clearContent, hideDelay);
 			};
 
 			const preloadImages = [];
@@ -123,8 +124,6 @@
 					const roll = rolls[i] % palette.length;
 					startDiceAnimation(roll, allImgDoms[i]);
 				}
-
-				hideTimeout = setTimeout(clearContent, hideDelay);
 			};
 
 			const onAssetLoaded = () => {
