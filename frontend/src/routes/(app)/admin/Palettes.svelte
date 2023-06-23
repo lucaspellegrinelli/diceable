@@ -57,7 +57,7 @@
 						alt="{skinName} dice"
 					/>
 				</Button>
-				<Dropdown id="diceDropdown" class="overflow-y-auto max-h-96">
+				<Dropdown id="diceDropdown" class="overflow-y-auto max-h-96 z-50">
 					<div class="p-2">
 						<Search bind:value={searchTerm} size="md" />
 					</div>
