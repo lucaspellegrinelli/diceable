@@ -2,6 +2,7 @@
 	import type { PlayerSkin } from '$lib/types';
 	import Icon from '@iconify/svelte';
 	import { Button, Dropdown, DropdownItem, Heading, Input, Tooltip } from 'flowbite-svelte';
+	import { capitalize } from '$lib/utils';
 
 	export let palettes: Array<{ name: string; skin: string[] }>;
 	export let playerSkins: Array<PlayerSkin>;
@@ -61,11 +62,11 @@
 			{/each}
 		</Dropdown>
 
-		<Button color="light">{playerSkin.effect}</Button>
+		<Button color="light">{capitalize(playerSkin.effect)}</Button>
 		<Dropdown>
 			{#each ['None', ...effectOptions] as effectName}
 				<DropdownItem on:click={chooseEffect(playerIndex, effectName)}>
-					{effectName}
+					{capitalize(effectName)}
 				</DropdownItem>
 			{/each}
 		</Dropdown>

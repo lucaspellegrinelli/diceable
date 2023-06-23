@@ -113,12 +113,13 @@
 	<div class="container mx-auto mt-6">
 		<Heading class="inline-flex" tag="h2">
 			discord invite link
-            <A href="https://discord.com/api/oauth2/authorize?client_id=1116110919953563729&permissions=1024&scope=bot" target="_blank">
-                <Icon icon="mdi:discord" class="ml-3 mt-1" />
-            </A>
-            <Tooltip placement="right">
-                click here to invite the bot to your server
-            </Tooltip>
+			<A
+				href="https://discord.com/api/oauth2/authorize?client_id=1116110919953563729&permissions=1024&scope=bot"
+				target="_blank"
+			>
+				<Icon icon="mdi:discord" class="ml-3 mt-1" />
+			</A>
+			<Tooltip placement="right">click here to invite the bot to your server</Tooltip>
 		</Heading>
 
 		<Hr class="mb-4 mt-6" height="h-px" style="z-index: -99" />
