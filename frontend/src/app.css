@@ -2,3 +2,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+ul::-webkit-scrollbar {
+	width: 6px;
+}
+
+ul::-webkit-scrollbar-track {
+	border-radius: 8px;
+    @apply bg-gray-200 dark:bg-gray-800
+}
+
+ul::-webkit-scrollbar-thumb {
+	border-radius: 8px;
+    @apply bg-gray-300 dark:bg-gray-500
+}

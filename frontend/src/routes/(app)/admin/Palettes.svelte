@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Input, Dropdown, DropdownItem, Tooltip, Button, Heading, Search } from 'flowbite-svelte';
+	import { capitalize } from '$lib/utils';
 
 	export let palettes: Array<{ name: string; skin: string[]; default: boolean }>;
 	export let diceSkinOptions: string[];
@@ -56,7 +57,7 @@
 						alt="{skinName} dice"
 					/>
 				</Button>
-				<Dropdown class="overflow-y-auto max-h-96">
+				<Dropdown id="diceDropdown" class="overflow-y-auto max-h-96">
 					<div class="p-2">
 						<Search bind:value={searchTerm} size="md" />
 					</div>
@@ -69,7 +70,7 @@
 										class="w-24 mr-2"
 										alt="{skinName} dice"
 									/>
-									<span class="flex-1">{diceSkinName}</span>
+									<span class="flex-1">{capitalize(diceSkinName)}</span>
 								</div>
 							</DropdownItem>
 						{/if}
