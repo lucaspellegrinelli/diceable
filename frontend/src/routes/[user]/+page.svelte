@@ -31,6 +31,7 @@
 
 			const numberDice = rolls.length;
 
+            palette.unshift(palette.pop());
 			const parsedPalette = JSON.stringify(
 				palette.map((diceSkin, i) => ({ name: diceSkin, number: i }))
 			);
