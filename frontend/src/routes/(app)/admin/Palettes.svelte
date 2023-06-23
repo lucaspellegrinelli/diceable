@@ -49,10 +49,10 @@
 
 		<div class="grid w-full gap-1 grid-cols-4 md:grid-cols-6 lg:grid-cols-12">
 			{#each palette.skin as skinName, skinIndex}
-				<Button color="light">
+				<Button class="py-1" color="light">
 					<img
 						src={skinUrl(skinName, (skinIndex + 1) % palette.skin.length)}
-						class="w-12"
+						class="w-14"
 						alt="{skinName} dice"
 					/>
 				</Button>
