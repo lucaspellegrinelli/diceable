@@ -5,7 +5,8 @@
 	import PlayerSkins from './PlayerSkins.svelte';
 	import type { PlayerSkin } from '$lib/types';
 	import { addToast } from '$lib/toasts';
-	import { Button, Hr, Spinner } from 'flowbite-svelte';
+	import { A, Button, Heading, Hr, Spinner, Tooltip } from 'flowbite-svelte';
+	import Icon from '@iconify/svelte';
 
 	const INVALID_PALETTE_NAME = 'Unknown';
 	const DEFAULT_EFFECT_NAME = 'None';
@@ -81,13 +82,13 @@
 			return acc;
 		}, {});
 
-        const defaultPalette = palettes.find((palette) => palette.default)!;
+		const defaultPalette = palettes.find((palette) => palette.default)!;
 
 		const formData = new FormData();
 		formData.append('user', data.user);
 		formData.append('custom_colors', customColors ? 'true' : 'false');
 		formData.append('palettes', JSON.stringify(palettesDict));
-        formData.append('default_palette', defaultPalette.name);
+		formData.append('default_palette', defaultPalette.name);
 		formData.append('player_skins', JSON.stringify(playerSkinsDict));
 
 		isSubmitting = true;
@@ -110,6 +111,18 @@
 
 {#if $page.data.session}
 	<div class="container mx-auto mt-6">
+		<Heading class="inline-flex" tag="h2">
+			discord invite link
+            <A href="https://discord.com/api/oauth2/authorize?client_id=1116110919953563729&permissions=1024&scope=bot" target="_blank">
+                <Icon icon="mdi:discord" class="ml-3 mt-1" />
+            </A>
+            <Tooltip placement="right">
+                click here to invite the bot to your server
+            </Tooltip>
+		</Heading>
+
+		<Hr class="mb-4 mt-6" height="h-px" style="z-index: -99" />
+
 		<Configurations bind:customColors />
 
 		<Hr class="my-8" height="h-px" style="z-index: -99" />
