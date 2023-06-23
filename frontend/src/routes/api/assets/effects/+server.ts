@@ -1,23 +1,20 @@
 import { env } from '$env/dynamic/private';
-import type { CloudflareVideoResponse } from '$lib/types';
+import { listObjects } from '$lib/s3Connection';
 
 export async function GET({ url }) {
-    const videosEndpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/stream`;
-
-    const headers = {
-        Authorization: `Bearer ${env.CLOUDFLARE_ASSETS_API_TOKEN}`,
-        'Content-Type': 'application/json'
-    };
+    const s3Response = await listObjects(env.S3_BUCKET, 'effects/');
 
     const effectNames = new Set();
+    if (s3Response.Contents) {
+        for (const effectsInfo of s3Response.Contents) {
+            if (!effectsInfo.Key) {
+                continue;
+            }
 
-    const response = await fetch(videosEndpoint, { headers });
-    const responseJson: CloudflareVideoResponse = await response.json();
-    const allVideos = responseJson.result;
-
-    for (const effectInfo of allVideos) {
-        const effectName = effectInfo.meta.filename.split('-')[0];
-        effectNames.add(effectName);
+            const splittedPath = effectsInfo.Key.split('/');
+            const effectsName = splittedPath[splittedPath.length - 2];
+            effectNames.add(effectsName);
+        }
     }
 
     return new Response(JSON.stringify(Array.from(effectNames)));

@@ -27,7 +27,6 @@
 		let hideTimeout = null;
 
 		const updateContent = async (rolls, palette, effect) => {
-			clearTimeout(hideTimeout);
 			clearContent();
 
 			const numberDice = rolls.length;
@@ -71,6 +70,9 @@
 				};
 
 				loopTimeout = setInterval(animate, animationDelay);
+
+				clearTimeout(hideTimeout);
+				hideTimeout = setTimeout(clearContent, hideDelay);
 			};
 
 			const preloadImages = [];
@@ -110,6 +112,41 @@
 				imgContainer.appendChild(imgDom);
 			}
 
+			let diceSkinLoadedCount = 0;
+			let effectLoaded = !effect;
+
+			const onEverythingLoaded = () => {
+				if (effect) {
+					const video = document.getElementById('roll-video');
+					video.play();
+				}
+
+				for (let i = 0; i < rolls.length; i++) {
+					const roll = rolls[i] % palette.length;
+					startDiceAnimation(roll, allImgDoms[i]);
+				}
+			};
+
+			const onAssetLoaded = () => {
+				if (diceSkinLoadedCount === palette.length && effectLoaded) {
+					onEverythingLoaded();
+				}
+			};
+
+			const onDiceSkinLoad = () => {
+				diceSkinLoadedCount += 1;
+				onAssetLoaded();
+			};
+
+			const onEffectLoad = () => {
+				effectLoaded = true;
+				onAssetLoaded();
+			};
+
+			for (let i = 0; i < preloadImages.length; i++) {
+				preloadImages[i].onload = onDiceSkinLoad;
+			}
+
 			if (effect) {
 				const video = document.getElementById('roll-video');
 				const source = document.getElementById('roll-source');
@@ -118,23 +155,8 @@
 				source.src = effectUrl;
 				video.load();
 
-				video.oncanplaythrough = () => {
-					video.play();
-					for (let i = 0; i < rolls.length; i++) {
-						const roll = rolls[i] % palette.length;
-						startDiceAnimation(roll, allImgDoms[i]);
-					}
-				};
-			} else {
-				preloadImages[preloadImages.length - 1].onload = () => {
-					for (let i = 0; i < rolls.length; i++) {
-						const roll = rolls[i] % palette.length;
-						startDiceAnimation(roll, allImgDoms[i]);
-					}
-				};
+				video.oncanplaythrough = onEffectLoad;
 			}
-
-			hideTimeout = setTimeout(clearContent, hideDelay);
 		};
 
 		const clearContent = () => {
@@ -167,12 +189,12 @@
 </div>
 
 <style>
-    :global(body) {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: transparent;
-    }
+	:global(body) {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		background-color: transparent;
+	}
 
 	#dice {
 		width: 1920px;
