@@ -32,7 +32,7 @@ def _load_dice_image(number: int, skin: str):
 
 def _load_dice_palette(palette: list[str]):
     dice_images = []
-    for i, skin in enumerate(palette):
+    for i, skin in enumerate([palette[-1]] + palette[:-1]):
         dice_img = _load_dice_image(i, skin)
         dice_images.append(dice_img)
 
