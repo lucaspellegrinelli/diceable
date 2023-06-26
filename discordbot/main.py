@@ -59,14 +59,14 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
 
     palette = server_config["palettes"].get(default_palette)
     if custom_colors:
-        palette = server_config["palettes"].get(palette_name, default_palette)
+        palette = server_config["palettes"].get(palette_name, palette)
 
     rolled_dice = [random.randint(1, 10) for _ in range(amount)]
     rolled_dice = sorted(rolled_dice, key=lambda x: x if x > 0 else 999)
 
     pub_content = {
         "server_id": server_id,
-        "user_id": user_id,
+        "user_id": owner_id.decode("utf-8"),
         "channel_id": channel_id,
         "rolls": rolled_dice,
         "palette": palette,
