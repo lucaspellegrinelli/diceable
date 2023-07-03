@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-	import { io } from '$lib/webSocketConnection';
 	import { getDicePositions } from '$lib/dicePositionCalculator';
 	import { onMount } from 'svelte';
 
@@ -31,7 +30,7 @@
 
 			const numberDice = rolls.length;
 
-            palette.unshift(palette.pop());
+			palette.unshift(palette.pop());
 			const parsedPalette = JSON.stringify(
 				palette.map((diceSkin, i) => ({ name: diceSkin, number: i }))
 			);
@@ -170,12 +169,24 @@
 			video.load();
 		};
 
-		io.on('rolls', (message) => {
-			if (message.user_id === userToken) {
-				const rolls = message.rolls;
-				const palette = message.palette;
-				const effect = message.effect;
+		const handleMessage = (parsedMessage) => {
+			if (parsedMessage.user_id === userToken) {
+				const rolls = parsedMessage.rolls;
+				const palette = parsedMessage.palette;
+				const effect = parsedMessage.effect;
 				updateContent(rolls, palette, effect);
+			}
+		};
+
+		// Connects to a readable stream GET /api/pubsub/
+		fetch('api/pubsub/').then(async (response) => {
+			const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) {
+					break;
+				}
+				handleMessage(JSON.parse(value));
 			}
 		});
 	});
