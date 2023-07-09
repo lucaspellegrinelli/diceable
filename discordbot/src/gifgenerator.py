@@ -21,7 +21,7 @@ def _load_dice_image(number: int, skin: str):
 
     img = Image.open(BytesIO(response.content))
     img = img.convert("RGBA")
-    img = img.resize((DICE_W, DICE_H), Image.ANTIALIAS)
+    img = img.resize((DICE_W, DICE_H))
 
     if number not in dice_cache:
         dice_cache[number] = {}
