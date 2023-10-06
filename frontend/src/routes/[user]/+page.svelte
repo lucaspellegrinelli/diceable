@@ -25,7 +25,7 @@
 	onMount(() => {
 		let hideTimeout = null;
 
-		const updateContent = async (rolls, palette, effect) => {
+		const updateContent = async (rolls, sides, palette, effect) => {
 			clearContent();
 
 			const numberDice = rolls.length;
@@ -38,6 +38,7 @@
 			const queryItems = [];
 			queryItems.push(`number=${numberDice}`);
 			queryItems.push(`palette=${parsedPalette}`);
+			queryItems.push(`sides=${sides}`);
 			if (effect) {
 				queryItems.push(`effect=${effect}`);
 			}
@@ -172,9 +173,10 @@
 		const handleMessage = (parsedMessage) => {
 			if (parsedMessage.user_id === userToken) {
 				const rolls = parsedMessage.rolls;
+				const sides = parsedMessage.sides;
 				const palette = parsedMessage.palette;
 				const effect = parsedMessage.effect;
-				updateContent(rolls, palette, effect);
+				updateContent(rolls, sides, palette, effect);
 			}
 		};
 

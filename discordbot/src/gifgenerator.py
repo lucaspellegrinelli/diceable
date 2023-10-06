@@ -2,6 +2,7 @@ import os
 import random
 import uuid
 from io import BytesIO
+from typing import Literal
 
 import requests
 from PIL import Image
@@ -15,8 +16,8 @@ def _dice_url(type: str, skin: str, number: int):
     return f"https://assets.togarashi.app/dice/{type}/{skin}/{number}.png"
 
 
-def _load_dice_image(number: int, skin: str):
-    cdn_url = _dice_url("d10", skin, number)
+def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: str):
+    cdn_url = _dice_url(sides, skin, number)
     response = requests.get(cdn_url)
 
     img = Image.open(BytesIO(response.content))
@@ -30,21 +31,22 @@ def _load_dice_image(number: int, skin: str):
     return img
 
 
-def _load_dice_palette(palette: list[str]):
+def _load_dice_palette(sides: Literal["d10"] | Literal["d20"], palette: list[str]):
     dice_images = []
     for i, skin in enumerate([palette[-1]] + palette[:-1]):
-        dice_img = _load_dice_image(i, skin)
+        dice_img = _load_dice_image(sides, i, skin)
         dice_images.append(dice_img)
 
     return dice_images
 
 
 def _create_rolls_animation(
+    sides: Literal["d10"] | Literal["d20"],
     rolls: list[int],
     palette: list[str],
     n_frames: int,
 ):
-    colored_dice = _load_dice_palette(palette)
+    colored_dice = _load_dice_palette(sides, palette)
     dice_positions = get_dice_positions(
         len(rolls), DICE_W, DICE_H, DICE_W, DICE_H, OUTPUT_W, OUTPUT_H, 0, 0
     )
@@ -64,12 +66,13 @@ def _create_rolls_animation(
 
 
 def create_roll_gif(
+    sides: Literal["d10"] | Literal["d20"],
     rolls: list[int],
     palette: list[str],
     n_frames: int,
     save_path: str,
 ):
-    anim = _create_rolls_animation(rolls, palette, n_frames)
+    anim = _create_rolls_animation(sides, rolls, palette, n_frames)
 
     roll_id = str(uuid.uuid4())
     path = os.path.join(save_path, f"roll-{roll_id}.gif")
