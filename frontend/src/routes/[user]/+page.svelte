@@ -182,12 +182,12 @@
 
 		// Connects to a readable stream GET /api/pubsub/
 		fetch('api/pubsub/').then(async (response) => {
-			const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+			const textDecoderStream = new TextDecoderStream();
+			const pipedStream = response.body.pipeTo(textDecoderStream.writable, { preventCancel: true });
+			const reader = textDecoderStream.readable.getReader();
+
 			while (true) {
 				const { done, value } = await reader.read();
-				if (done) {
-					break;
-				}
 				handleMessage(JSON.parse(value));
 			}
 		});
