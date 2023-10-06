@@ -49,6 +49,7 @@
 		const playerWithInvalidPalette = playerSkins.find((playerSkin) =>
 			palettes.every((palette) => palette.name !== playerSkin.palette)
 		);
+
 		if (playerWithInvalidPalette) {
 			const identifier = playerWithInvalidPalette.description || playerWithInvalidPalette.discordId;
 			return `Player "${identifier}" has an invalid palette`;
@@ -86,6 +87,7 @@
 
 		const formData = new FormData();
 		formData.append('user', data.user);
+		formData.append('sides', data.sides);
 		formData.append('custom_colors', customColors ? 'true' : 'false');
 		formData.append('palettes', JSON.stringify(palettesDict));
 		formData.append('default_palette', defaultPalette.name);
@@ -95,17 +97,14 @@
 		fetch(`/admin`, {
 			method: 'POST',
 			body: formData
-		})
-			.then(() => {
-				addToast('Saved successfully', 'success');
-			})
-			.catch((err) => {
-				addToast('Failed to save', 'error');
-				console.error(err);
-			})
-			.finally(() => {
-				isSubmitting = false;
-			});
+		}).then(() => {
+			addToast('Saved successfully', 'success');
+		}).catch((err) => {
+			addToast('Failed to save', 'error');
+			console.error(err);
+		}).finally(() => {
+			isSubmitting = false;
+		});
 	};
 </script>
 

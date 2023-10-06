@@ -9,11 +9,12 @@ export const load: PageServerLoad<PageServerLoadData> = async (event) => {
     }
 
     const user = session?.user?.image?.split('avatars/')[1]?.split('/')[0] || '';
+    const sides = event.params.sides || "d10";
 
     const [configRes, effectRes, diceRes] = await Promise.all([
-        event.fetch(`/api/config/${user}`),
-        event.fetch(`/api/assets/effects`),
-        event.fetch(`/api/assets/dice`)
+        event.fetch(`/api/config/${user}/${sides}`),
+        event.fetch(`/api/assets/effects/${sides}`),
+        event.fetch(`/api/assets/dice/${sides}`)
     ]);
 
     const [config, effects, dice]: [Config, string[], string[]] = await Promise.all([
@@ -25,6 +26,7 @@ export const load: PageServerLoad<PageServerLoadData> = async (event) => {
     return {
         session,
         user,
+        sides,
         config,
         effects,
         dice
@@ -39,6 +41,7 @@ export const actions = {
 
         const data = await request.formData();
         const user = data.get('user');
+        const sides = data.get('sides');
 
         if (sessionUser !== user) {
             return {
@@ -54,7 +57,7 @@ export const actions = {
         const playerSkins = JSON.parse(data.get('player_skins') || '{}');
         const defaultPalette = data.get('default_palette');
 
-        const response = await event.fetch(`/api/config/${user}`, {
+        const response = await event.fetch(`/api/config/${user}/${sides}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

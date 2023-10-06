@@ -20,7 +20,7 @@ export async function GET({ url }) {
     }
 
     if (effect) {
-        ids.effect = getEffectUrl('d10', effect, numberDice);
+        ids.effect = getEffectUrl(diceSides, effect, numberDice);
     }
 
     return new Response(JSON.stringify(ids));

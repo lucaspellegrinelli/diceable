@@ -50,19 +50,20 @@ async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int,
         return await _repond_interaction(interaction, "Server not configured")
 
     server_config = json.loads(server_config)
+    if not sides in server_config:
+        return await _repond_interaction(interaction, "Dice not configured. Contact an admin.")
 
-    custom_colors = server_config.get("custom_colors") == "true"
-    default_palette = server_config.get("default_palette", None)
-    player_skin = server_config["player_skins"].get(user_id, {})
+    dice_sides_config = server_config.get(sides, {})
+
+    custom_colors = dice_sides_config.get("custom_colors") == "true"
+    default_palette = dice_sides_config.get("default_palette", None)
+    player_skin = dice_sides_config["player_skins"].get(user_id, {})
     palette_name = player_skin.get("palette", None)
     effect_name = player_skin.get("effect", None)
 
-    palette = server_config["palettes"].get(default_palette)
+    palette = dice_sides_config["palettes"].get(default_palette)
     if custom_colors:
-        palette = server_config["palettes"].get(palette_name, palette)
-
-    if sides == "d20":
-        palette = ["default" for _ in range(20)]
+        palette = dice_sides_config["palettes"].get(palette_name, palette)
 
     max_dice_result = 10 if sides == "d10" else 20
     rolled_dice = [random.randint(1, max_dice_result) for _ in range(amount)]
@@ -81,7 +82,7 @@ async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int,
     redis_client.publish("rolls", json.dumps(pub_content))
     await _repond_interaction(interaction, "Rolling dice...")
 
-    gif_path = create_roll_gif(sides, rolled_dice, palette, 16, "rolls")
+    gif_path = create_roll_gif(sides, rolled_dice, palette, 12, "rolls")
     roll_str = _generate_roll_message(rolled_dice, modifier)
 
     channel = interaction.channel

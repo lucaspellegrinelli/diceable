@@ -8,9 +8,11 @@
 
 	let searchTerm = '';
 
+	const diceSides = diceSkinOptions.length;
+
 	const createNewPalette = (name: string) => ({
 		name: name,
-		skin: Array(10).fill(diceSkinOptions[0]),
+		skin: Array(diceSides).fill(diceSkinOptions[0]),
 		default: palettes.length === 0
 	});
 
@@ -30,8 +32,8 @@
 		});
 	};
 
-	const skinUrl = (skin: string, number: number, type: string = 'd10') => {
-		return `https://assets.togarashi.app/dice/${type}/${skin}/${number}.png`;
+	const skinUrl = (skin: string, number: number) => {
+		return `https://assets.togarashi.app/dice/${diceSides}/${skin}/${number}.png`;
 	};
 </script>
 

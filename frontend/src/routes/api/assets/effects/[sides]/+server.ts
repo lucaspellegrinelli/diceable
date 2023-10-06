@@ -1,8 +1,9 @@
 import { env } from '$env/dynamic/private';
 import { listObjects } from '$lib/s3Connection';
 
-export async function GET({ url }) {
-    const s3Response = await listObjects(env.S3_BUCKET, 'effects/');
+export async function GET({ params, url }) {
+    const diceSides = params.sides;
+    const s3Response = await listObjects(env.S3_BUCKET, `effects/${diceSides}/`);
 
     const effectNames = new Set();
     if (s3Response.Contents) {
