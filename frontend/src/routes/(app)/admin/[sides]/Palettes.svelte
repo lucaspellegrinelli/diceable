@@ -8,7 +8,7 @@
 
 	let searchTerm = '';
 
-	const diceSides = diceSkinOptions.length;
+	const diceSides = palettes[0].skin.length;
 
 	const createNewPalette = (name: string) => ({
 		name: name,
@@ -33,7 +33,7 @@
 	};
 
 	const skinUrl = (skin: string, number: number) => {
-		return `https://assets.togarashi.app/dice/${diceSides}/${skin}/${number}.png`;
+		return `https://assets.togarashi.app/dice/d${diceSides}/${skin}/${number}.png`;
 	};
 </script>
 
