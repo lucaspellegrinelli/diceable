@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import random
+from typing import Literal
 
 import discord
 import redis
@@ -32,8 +33,7 @@ def _repond_interaction(interaction, message, **kwargs):
     return interaction.response.send_message(f"```yaml\n{message}```", **kwargs)
 
 
-@tree.command(name="roll", description="Roll dice")
-async def roll_command(interaction, amount: int, modifier: int = 0):
+async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int, modifier: int = 0):
     server_id = str(interaction.guild_id)
     user_id = str(interaction.user.id)
     channel_id = str(interaction.channel_id)
@@ -61,7 +61,11 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
     if custom_colors:
         palette = server_config["palettes"].get(palette_name, palette)
 
-    rolled_dice = [random.randint(1, 10) for _ in range(amount)]
+    if sides == "d20":
+        palette = ["default" for _ in range(20)]
+
+    max_dice_result = 10 if sides == "d10" else 20
+    rolled_dice = [random.randint(1, max_dice_result) for _ in range(amount)]
     rolled_dice = sorted(rolled_dice, key=lambda x: x if x > 0 else 999)
 
     pub_content = {
@@ -69,6 +73,7 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
         "user_id": owner_id.decode("utf-8"),
         "channel_id": channel_id,
         "rolls": rolled_dice,
+        "sides": sides,
         "palette": palette,
         "effect": effect_name,
     }
@@ -76,7 +81,7 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
     redis_client.publish("rolls", json.dumps(pub_content))
     await _repond_interaction(interaction, "Rolling dice...")
 
-    gif_path = create_roll_gif(rolled_dice, palette, 16, "rolls")
+    gif_path = create_roll_gif(sides, rolled_dice, palette, 16, "rolls")
     roll_str = _generate_roll_message(rolled_dice, modifier)
 
     channel = interaction.channel
@@ -86,6 +91,21 @@ async def roll_command(interaction, amount: int, modifier: int = 0):
     orig_response = await interaction.original_response()
     await asyncio.sleep(4)
     await orig_response.edit(content=f"```yaml\n{roll_str}```")
+
+
+@tree.command(name="roll", description="Roll dice")
+async def roll_command(interaction, amount: int, modifier: int = 0):
+    await roll(interaction, "d10", amount, modifier)
+
+
+@tree.command(name="d10", description="Roll ten-sided dice")
+async def d10_command(interaction, amount: int, modifier: int = 0):
+    await roll(interaction, "d10", amount, modifier)
+
+
+@tree.command(name="d20", description="Roll twenty-sided dice")
+async def d20_command(interaction, amount: int, modifier: int = 0):
+    await roll(interaction, "d20", amount, modifier)
 
 
 @tree.command(name="register", description="Register server")

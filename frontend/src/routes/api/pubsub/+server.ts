@@ -1,9 +1,9 @@
-import redisClient from '$lib/redisConnection';
+import { redisPubsubClient } from '$lib/redisConnection';
 
 export async function GET() {
     const readable = new ReadableStream({
         start(controller) {
-            redisClient.subscribe('rolls', (message) => {
+            redisPubsubClient.subscribe('rolls', (message) => {
                 controller.enqueue(message);
             });
         }

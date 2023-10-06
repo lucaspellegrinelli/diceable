@@ -8,6 +8,7 @@ export async function GET({ url }) {
     const numberDice: number = parseInt(url.searchParams.get('number'));
     const palette: { name: string; number: number }[] = JSON.parse(url.searchParams.get('palette'));
     const effect: string = url.searchParams.get('effect');
+    const diceSides: string = url.searchParams.get('sides');
 
     const ids: {
         dice: Record<number, string>;
@@ -15,7 +16,7 @@ export async function GET({ url }) {
     } = { dice: {}, effect: '' };
 
     for (const paletteItem of palette) {
-        ids.dice[paletteItem.number] = getDiceUrl('d10', paletteItem.name, paletteItem.number);
+        ids.dice[paletteItem.number] = getDiceUrl(diceSides, paletteItem.name, paletteItem.number);
     }
 
     if (effect) {

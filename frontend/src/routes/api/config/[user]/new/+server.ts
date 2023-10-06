@@ -1,4 +1,4 @@
-import redisClient from "$lib/redisConnection";
+import { redisClient } from "$lib/redisConnection";
 
 
 const get_default_config = (userUUID: string) => (JSON.stringify({

@@ -1,4 +1,4 @@
-import redisClient from '$lib/redisConnection';
+import { redisClient } from '$lib/redisConnection';
 
 type UserConfig = {
     custom_colors: string,
