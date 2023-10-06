@@ -45,20 +45,37 @@ def _create_rolls_animation(
     rolls: list[int],
     palette: list[str],
     n_frames: int,
+    size_multiplier: int = 0.5,
 ):
     colored_dice = _load_dice_palette(sides, palette)
     dice_positions = get_dice_positions(
         len(rolls), DICE_W, DICE_H, DICE_W, DICE_H, OUTPUT_W, OUTPUT_H, 0, 0
     )
 
+    resized_colored_dice = []
+    for dice in colored_dice:
+        target_w = int(DICE_W * size_multiplier)
+        target_h = int(DICE_H * size_multiplier)
+        resized_dice = dice.resize((target_w, target_h))
+        resized_colored_dice.append(resized_dice)
+
     frames = []
     for i in range(n_frames):
         is_last = i == n_frames - 1
-        frame = Image.new("RGBA", (OUTPUT_W, OUTPUT_H), (0, 0, 0, 0))
+
+        real_w = int(OUTPUT_W * size_multiplier)
+        real_h = int(OUTPUT_H * size_multiplier)
+        frame = Image.new("RGBA", (real_w, real_h), (0, 0, 0, 0))
         for (x, y), roll in zip(dice_positions, rolls):
             roll_i = roll % len(colored_dice)
-            dice = colored_dice[roll_i] if is_last else random.choice(colored_dice)
-            frame.paste(dice, (x, y), dice)
+
+            dice = resized_colored_dice[roll_i]
+            if not is_last:
+                dice = random.choice(resized_colored_dice)
+
+            target_x = int(x * size_multiplier)
+            target_y = int(y * size_multiplier)
+            frame.paste(dice, (target_x, target_y), dice)
 
         frames.append(frame)
 
