@@ -13,7 +13,7 @@ dice_cache = {}
 
 
 def _dice_url(sides: str, skin: str, number: int):
-    return f"https://assets.togarashi.app/dice/{sides}/{skin}/{sides}-{number}.png"
+    return f"https://assets.togarashi.app/dice/{sides}/{skin}/{number}.png"
 
 
 def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: str):

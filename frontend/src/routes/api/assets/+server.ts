@@ -1,8 +1,8 @@
 const getDiceUrl = (sides: string, skin: string, number: number) =>
-    `https://assets.togarashi.app/dice/${sides}/${skin}/${sides}-${number}.png`;
+    `https://assets.togarashi.app/dice/${sides}/${skin}/${number}.png`;
 
 const getEffectUrl = (sides: string, skin: string, number: number) =>
-    `https://assets.togarashi.app/effects/${sides}/${skin}/${sides}-${number}.mp4`;
+    `https://assets.togarashi.app/effects/${sides}/${skin}/${number}.mp4`;
 
 export async function GET({ url }) {
     const numberDice: number = parseInt(url.searchParams.get('number'));
