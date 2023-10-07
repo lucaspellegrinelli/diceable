@@ -12,13 +12,14 @@ from .common import DICE_H, DICE_W, OUTPUT_H, OUTPUT_W, get_dice_positions
 dice_cache = {}
 
 
-def _dice_url(type: str, skin: str, number: int):
-    return f"https://assets.togarashi.app/dice/{type}/{skin}/{number}.png"
+def _dice_url(sides: str, skin: str, number: int):
+    return f"https://assets.togarashi.app/dice/{sides}/{skin}/{number}.png"
 
 
 def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: str):
-    if skin in dice_cache.get(number, {}):
-        return dice_cache[number][skin]
+    if number in dice_cache.get(sides, {}):
+        if skin in dice_cache[sides].get(number, {}):
+            return dice_cache[sides][number][skin]
 
     cdn_url = _dice_url(sides, skin, number)
     response = requests.get(cdn_url)
@@ -27,8 +28,9 @@ def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: 
     img = img.convert("RGBA")
     img = img.resize((DICE_W, DICE_H))
 
-    dice_cache.setdefault(number, {})
-    dice_cache[number][skin] = img
+    dice_cache.setdefault(sides, {})
+    dice_cache[sides].setdefault(number, {})
+    dice_cache[sides][number][skin] = img
 
     return img
 

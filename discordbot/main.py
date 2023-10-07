@@ -7,6 +7,7 @@ from typing import Literal
 
 import discord
 import redis
+import socketio
 from discord import app_commands
 from dotenv import load_dotenv
 from src.gifgenerator import create_roll_gif
@@ -18,6 +19,8 @@ logger = logging.getLogger("discord")
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
+sio = socketio.Client()
 
 redis_client = None
 
@@ -33,7 +36,9 @@ def _repond_interaction(interaction, message, **kwargs):
     return interaction.response.send_message(f"```yaml\n{message}```", **kwargs)
 
 
-async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int, modifier: int = 0):
+async def roll(
+    interaction, sides: Literal["d10"] | Literal["d20"], amount: int, modifier: int = 0
+):
     server_id = str(interaction.guild_id)
     user_id = str(interaction.user.id)
     channel_id = str(interaction.channel_id)
@@ -51,7 +56,9 @@ async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int,
 
     server_config = json.loads(server_config)
     if not sides in server_config:
-        return await _repond_interaction(interaction, "Dice not configured. Contact an admin.")
+        return await _repond_interaction(
+            interaction, "Dice not configured. Contact an admin."
+        )
 
     dice_sides_config = server_config.get(sides, {})
 
@@ -79,7 +86,9 @@ async def roll(interaction, sides: Literal["d10"] | Literal["d20"], amount: int,
         "effect": effect_name,
     }
 
-    redis_client.publish("rolls", json.dumps(pub_content))
+    sio.emit("roll", pub_content)
+    logger.log(logging.INFO, f"Rolling dice: {pub_content}")
+
     await _repond_interaction(interaction, "Rolling dice...")
 
     gif_path = create_roll_gif(sides, rolled_dice, palette, 12, "rolls")
@@ -149,8 +158,20 @@ async def on_ready():
     logger.log(logging.INFO, f"Logged in as {client.user}")
 
 
+@sio.event
+def connect():
+    print("Connected to socket.io")
+
+
+@sio.event
+def disconnect():
+    print("Disconnected to socket.io")
+
+
 if __name__ == "__main__":
     load_dotenv()
+
+    sio.connect(os.getenv("SOCKETIO_URL"))
 
     redis_client = redis.Redis(
         host=os.getenv("REDISHOST"),

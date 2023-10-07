@@ -49,7 +49,7 @@ export async function POST({ params, request }) {
     }
 
     const defaultConfig = getDefaultDiceConfig(diceSideCount[diceSides], userUUID);
-    const currentConfig: UserDiceConfig = JSON.parse(diceUserConfig || defaultConfig);
+    const currentConfig: UserDiceConfig = diceUserConfig || defaultConfig;
 
     // Remove any palettes that don't exist
     const palettes = Object.keys(config.palettes);

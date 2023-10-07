@@ -1,7 +1,12 @@
+<svelte:head>
+	<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+</svelte:head>
+
 <script>
 	// @ts-nocheck
 	import { getDicePositions } from '$lib/dicePositionCalculator';
 	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	export let data;
 	const userToken = data.user;
@@ -180,16 +185,33 @@
 			}
 		};
 
-		// Connects to a readable stream GET /api/pubsub/
-		fetch('api/pubsub/').then(async (response) => {
-			const textDecoderStream = new TextDecoderStream();
-			const pipedStream = response.body.pipeTo(textDecoderStream.writable, { preventCancel: true });
-			const reader = textDecoderStream.readable.getReader();
+		const socket = io(env.PUBLIC_SOCKETIO_URL, {
+			withCredentials: true,
+		});
 
-			while (true) {
-				const { done, value } = await reader.read();
-				handleMessage(JSON.parse(value));
-			}
+		socket.on('connect', () => {
+			console.log('Connected to socket.io server. My ID:', socket.id);
+		});
+
+		socket.on('disconnect', () => {
+			console.log('Disconnected from socket.io server');
+		});
+
+		socket.on('connect_error', (err) => {
+			console.log('Connection error', err);
+		});
+
+		socket.on('connect_timeout', (err) => {
+			console.log('Connection timeout', err);
+		});
+
+		socket.on('error', (err) => {
+			console.log('Socket.io error', err);
+		});
+
+		socket.on('roll', (data) => {
+			console.log('Received "roll" with data:', data);
+			handleMessage(data);
 		});
 	});
 </script>
