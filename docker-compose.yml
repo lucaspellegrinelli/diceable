@@ -17,7 +17,6 @@ services:
       context: ./pubsub
       dockerfile: Dockerfile.dev
     container_name: websocket
-    command: node index.js
     ports:
       - 5555:5555
     environment:
@@ -31,7 +30,6 @@ services:
       context: ./discordbot
       dockerfile: Dockerfile.dev
     container_name: bot
-    command: python main.py
     depends_on:
       - websocket
       - redis
@@ -48,7 +46,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     container_name: frontend
-    command: npm run dev -- --host
     depends_on:
       - redis
     ports:

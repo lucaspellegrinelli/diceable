@@ -1,5 +1,6 @@
 *.pyc
 *.mp4
 *.gif
+.env
 
 *.DS_Store
