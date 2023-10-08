@@ -4,13 +4,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm install
+RUN npm install dotenv
 
 COPY . .
 
 RUN npm run sync
 RUN npm run build
 
+ENV PORT=3000
 EXPOSE 3000
 
-CMD ["node", "build/index.js"]
+CMD ["node", "-r", "dotenv/config", "server.js"]
