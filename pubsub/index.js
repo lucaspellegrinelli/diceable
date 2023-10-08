@@ -7,11 +7,11 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-	cors: {
-		origin: 'https://bot.togarashi.app',
-		methods: ['GET', 'POST'],
-		credentials: true
-	}
+    cors: {
+        origin: ['https://bot.togarashi.app', 'http://localhost:3000'],
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
 });
 
 io.on('connection', (socket) => {

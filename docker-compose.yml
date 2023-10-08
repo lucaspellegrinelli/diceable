@@ -12,6 +12,20 @@ services:
     ports:
       - 6379:6379
 
+  websocket:
+    build:
+      context: ./pubsub
+      dockerfile: Dockerfile.dev
+    container_name: websocket
+    command: node index.js
+    ports:
+      - 5555:5555
+    environment:
+      - PORT=5555
+    volumes:
+      - ./pubsub:/app
+      - /app/node_modules
+
   bot:
     build:
       context: ./discordbot
@@ -19,12 +33,15 @@ services:
     container_name: bot
     command: python main.py
     depends_on:
+      - websocket
       - redis
     environment:
       - REDISHOST=redis
       - REDISPASSWORD=password
       - REDISPORT=6379
       - REDISUSER=default
+    volumes:
+      - ./discordbot:/app
 
   frontend:
     build:
@@ -43,3 +60,4 @@ services:
       - REDISUSER=default
     volumes:
       - ./frontend:/app
+      - /app/node_modules
