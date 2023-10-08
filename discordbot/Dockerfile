@@ -3,9 +3,7 @@ FROM python:3.11-slim-bullseye
 WORKDIR /app
 
 COPY ./requirements.txt /app
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY . /app
-RUN rm .env
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 CMD ["python", "main.py"]

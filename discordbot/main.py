@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import time
 import random
 from typing import Literal
 
@@ -160,18 +161,24 @@ async def on_ready():
 
 @sio.event
 def connect():
-    print("Connected to socket.io")
+    logger.log(logging.INFO, "Connected to socket.io")
 
 
 @sio.event
 def disconnect():
-    print("Disconnected to socket.io")
+    logger.log(logging.INFO, "Disconnected to socket.io")
 
 
 if __name__ == "__main__":
     load_dotenv()
 
-    sio.connect(os.getenv("SOCKETIO_URL"))
+    while True:
+        try:
+            sio.connect(os.getenv("SOCKETIO_URL"))
+            break
+        except socketio.exceptions.ConnectionError:
+            logger.log(logging.INFO, "Socket.io connection error. Retrying in 5s...")
+            time.sleep(5)
 
     redis_client = redis.Redis(
         host=os.getenv("REDISHOST"),
