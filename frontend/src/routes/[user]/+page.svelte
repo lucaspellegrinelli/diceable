@@ -190,7 +190,7 @@
 		});
 
 		socket.on('connect', () => {
-			console.log('Connected to socket.io server. My ID:', socket.id);
+			console.log('Connected to socket.io server');
 		});
 
 		socket.on('disconnect', () => {
@@ -210,7 +210,6 @@
 		});
 
 		socket.on('roll', (data) => {
-			console.log('Received "roll" with data:', data);
 			handleMessage(data);
 		});
 	});
