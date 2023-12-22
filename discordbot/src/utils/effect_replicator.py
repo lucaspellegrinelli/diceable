@@ -3,7 +3,7 @@ import os
 
 import cv2
 import numpy as np
-from src.common import get_dice_positions
+from src.utils.common import get_dice_positions
 
 SIZE_FACTOR = 0.7
 EFFECT_WIDTH = int(round(2000 * SIZE_FACTOR))
@@ -47,7 +47,10 @@ def _paste_image(background, image, x, y):
 
 
 def create_effect_video(
-    effect_video: cv2.VideoCapture, effect_name: str, n_dice: int, save_dir: str
+    effect_video: cv2.VideoCapture,
+    effect_name: str,
+    n_dice: int,
+    save_dir: str,
 ):
     output_path = os.path.join(save_dir, f"{effect_name}-{n_dice}.mp4")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -75,11 +78,13 @@ def create_effect_video(
 
         if ret:
             out_frame = np.zeros((SCREEN_HEIGHT, SCREEN_WIDTH, 3), np.uint8)
-            effect_frame = cv2.resize(effect_frame, (EFFECT_WIDTH, EFFECT_HEIGHT))
+            effect_frame = cv2.resize(
+                effect_frame, (EFFECT_WIDTH, EFFECT_HEIGHT))
             effect_frame = cv2.cvtColor(effect_frame, cv2.COLOR_BGR2RGB)
 
             for x, y in dice_positions:
-                background = np.zeros((SCREEN_HEIGHT, SCREEN_WIDTH, 3), np.uint8)
+                background = np.zeros(
+                    (SCREEN_HEIGHT, SCREEN_WIDTH, 3), np.uint8)
                 resized_effect = _paste_image(background, effect_frame, x, y)
                 out_frame = cv2.addWeighted(out_frame, 1, resized_effect, 1, 0)
 

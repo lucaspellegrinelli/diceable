@@ -16,7 +16,11 @@ def _dice_url(sides: str, skin: str, number: int):
     return f"https://assets.togarashi.app/dice/{sides}/{skin}/{number}.png"
 
 
-def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: str):
+def _load_dice_image(
+    sides: Literal["d10"] | Literal["d20"],
+    number: int,
+    skin: str
+):
     if number in dice_cache.get(sides, {}):
         if skin in dice_cache[sides].get(number, {}):
             return dice_cache[sides][number][skin]
@@ -35,7 +39,10 @@ def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: 
     return img
 
 
-def _load_dice_palette(sides: Literal["d10"] | Literal["d20"], palette: list[str]):
+def _load_dice_palette(
+    sides: Literal["d10"] | Literal["d20"],
+    palette: list[str]
+):
     dice_images = []
     for i, skin in enumerate([palette[-1]] + palette[:-1]):
         dice_img = _load_dice_image(sides, i, skin)
@@ -49,7 +56,7 @@ def _create_rolls_animation(
     rolls: list[int],
     palette: list[str],
     n_frames: int,
-    size_multiplier: int = 0.5,
+    size_multiplier: float = 0.5,
 ):
     colored_dice = _load_dice_palette(sides, palette)
     dice_positions = get_dice_positions(
@@ -90,8 +97,8 @@ def create_roll_gif(
     sides: Literal["d10"] | Literal["d20"],
     rolls: list[int],
     palette: list[str],
-    n_frames: int,
-    save_path: str,
+    n_frames: int = 12,
+    save_path: str = "rolls",
 ):
     anim = _create_rolls_animation(sides, rolls, palette, n_frames)
 
