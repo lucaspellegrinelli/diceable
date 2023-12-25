@@ -4,4 +4,4 @@ requests
 python-dotenv
 redis
 Pillow
-python-socketio
+python-socketio[client]
