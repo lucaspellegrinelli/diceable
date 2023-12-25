@@ -37,6 +37,9 @@ async def _get_owner_id(config: BotConfig, server_id: str):
     if isinstance(owner_id, ABCAwaitable):
         owner_id = await owner_id
 
+    if isinstance(owner_id, bytes):
+        return owner_id.decode("utf-8")
+
     return owner_id
 
 
