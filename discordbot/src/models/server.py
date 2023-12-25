@@ -10,6 +10,14 @@ class PlayerSkin:
     description: Optional[str]
     effect: Optional[str]
 
+    def to_json(self):
+        return {
+            "discordId": self.discordId,
+            "palette": self.palette,
+            "description": self.description,
+            "effect": self.effect,
+        }
+
     @staticmethod
     def from_json(json_obj) -> "PlayerSkin":
         return PlayerSkin(
@@ -47,6 +55,17 @@ class DiceConfig:
 
         return player_skin.effect
 
+    def to_json(self):
+        return {
+            "custom_colors": self.custom_colors,
+            "palettes": self.palettes,
+            "player_skins": {
+                skin_id: skin.to_json()
+                for skin_id, skin in self.player_skins.items()
+            },
+            "default_palette": self.default_palette,
+        }
+
     @staticmethod
     def from_json(json_obj) -> "DiceConfig":
         return DiceConfig(
@@ -72,12 +91,7 @@ class DiscordServerConfig:
 
     def to_json(self) -> str:
         return json.dumps({
-            dice_name: {
-                "custom_colors": dice_config.custom_colors,
-                "palettes": dice_config.palettes,
-                "player_skins": dice_config.player_skins,
-                "default_palette": dice_config.default_palette,
-            }
+            dice_name: dice_config.to_json()
             for dice_name, dice_config in self.dice.items()
         })
 
@@ -97,7 +111,7 @@ class DiscordServerConfig:
             f"d{sides}": DiceConfig(
                 custom_colors="false",
                 palettes={
-                    "default": ["blue"] * sides,
+                    "default": ["indigo"] * sides,
                 },
                 player_skins={},
                 default_palette="default",
