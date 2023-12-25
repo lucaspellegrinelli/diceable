@@ -35,7 +35,7 @@ def disconnect():
 
 
 async def close_and_disconnect_services():
-    _ = config.client.close()
+    await config.client.close()
     config.sio.disconnect()
 
 
@@ -43,6 +43,7 @@ def signal_handler(sig, _):
     config.logger.log(logging.INFO, f"Received signal {sig}. Exiting...")
     loop = asyncio.get_event_loop()
     loop.run_until_complete(close_and_disconnect_services())
+    loop.close()
     sys.exit(0)
 
 

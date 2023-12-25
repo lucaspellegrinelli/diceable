@@ -1,13 +1,12 @@
 import asyncio
 from collections.abc import Awaitable as ABCAwaitable
-import json
 import logging
 import random
 from typing import Literal
 
 import discord
 
-from models.server import parse_discord_server_config
+from models.server import DiscordServerConfig
 
 from .config import BotConfig
 from .gif_generator import create_roll_gif
@@ -55,8 +54,7 @@ async def _get_server_config(config: BotConfig, owner_id: str):
     if server_config is None:
         return None
 
-    json_config = json.loads(server_config)
-    return parse_discord_server_config(json_config)
+    return DiscordServerConfig.from_json(server_config)
 
 
 async def roll(
@@ -76,19 +74,19 @@ async def roll(
         "user-configs", owner_id
     ):
         return await interaction.response.send_message(
-            "```yaml\nServer not configured```",
+            "```yaml\nServer not configured: No owner found```",
         )
 
     server_config = await _get_server_config(config, owner_id)
 
     if server_config is None:
         return await interaction.response.send_message(
-            "```yaml\nServer not configured```",
+            "```yaml\nServer not configured: No config found```",
         )
 
     if not server_config.has_side(sides):
         return await interaction.response.send_message(
-            "```yaml\nDice not configured. Contact an admin.```",
+            f"```yaml\nDice with {sides} sides not configured```",
         )
 
     dice_sides_config = server_config.get_side_config(sides)

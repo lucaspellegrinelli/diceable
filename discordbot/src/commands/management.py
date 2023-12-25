@@ -1,4 +1,5 @@
 from collections.abc import Awaitable as ABCAwaitable
+from models.server import DiscordServerConfig
 
 from utils.config import BotConfig
 
@@ -15,6 +16,11 @@ def setup_management_commands(config: BotConfig):
             )
 
         config.redis_client.hset("user-servers", server_id, user_id)
+        config.redis_client.hset(
+            "user-configs",
+            user_id,
+            DiscordServerConfig.default().to_json()
+        )
         return await interaction.response.send_message(
             f"```yaml\nServer registered to {user_id}```"
         )
