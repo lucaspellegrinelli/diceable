@@ -1,5 +1,5 @@
-from utils.discord_roll import roll
 from utils.config import BotConfig
+from utils.discord_roll import roll
 
 
 def setup_roll_commands(config: BotConfig):
@@ -15,6 +15,11 @@ def setup_roll_commands(config: BotConfig):
     async def d20_command(interaction, amount: int, modifier: int = 0):
         await roll(interaction, config, "d20", amount, modifier)
 
-    config.tree.add_command(roll_command)
-    config.tree.add_command(d10_command)
-    config.tree.add_command(d20_command)
+    if not config.tree.get_command("roll"):
+        config.tree.add_command(roll_command)
+
+    if not config.tree.get_command("d10"):
+        config.tree.add_command(d10_command)
+
+    if not config.tree.get_command("d20"):
+        config.tree.add_command(d20_command)

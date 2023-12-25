@@ -1,4 +1,5 @@
 from collections.abc import Awaitable as ABCAwaitable
+
 from utils.config import BotConfig
 
 
@@ -48,5 +49,8 @@ def setup_management_commands(config: BotConfig):
             "```yaml\nServer unregistered```"
         )
 
-    config.tree.add_command(unregister_command)
-    config.tree.add_command(register_command)
+    if not config.tree.get_command("register"):
+        config.tree.add_command(register_command)
+
+    if not config.tree.get_command("unregister"):
+        config.tree.add_command(unregister_command)

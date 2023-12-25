@@ -1,14 +1,16 @@
-from collections.abc import Awaitable as ABCAwaitable
-import discord
 import asyncio
+from collections.abc import Awaitable as ABCAwaitable
+import json
 import logging
 import random
-import json
 from typing import Literal
 
-from ..models.server import parse_discord_server_config
-from .gif_generator import create_roll_gif
+import discord
+
+from models.server import parse_discord_server_config
+
 from .config import BotConfig
+from .gif_generator import create_roll_gif
 
 
 def _roll_dice(

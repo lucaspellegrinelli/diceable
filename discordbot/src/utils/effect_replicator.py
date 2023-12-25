@@ -3,7 +3,8 @@ import os
 
 import cv2
 import numpy as np
-from src.utils.common import get_dice_positions
+
+from utils.common import get_dice_positions
 
 SIZE_FACTOR = 0.7
 EFFECT_WIDTH = int(round(2000 * SIZE_FACTOR))

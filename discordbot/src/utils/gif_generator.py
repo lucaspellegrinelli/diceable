@@ -1,11 +1,11 @@
+from io import BytesIO
 import os
 import random
-import uuid
-from io import BytesIO
 from typing import Literal
+import uuid
 
-import requests
 from PIL import Image
+import requests
 
 from .common import DICE_H, DICE_W, OUTPUT_H, OUTPUT_W, get_dice_positions
 

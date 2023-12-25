@@ -1,23 +1,25 @@
+import asyncio
 import logging
+import signal
+import sys
 import time
+
 from dotenv import load_dotenv
 
-from utils.config import setup_config
-from commands.roll import setup_roll_commands
 from commands.management import setup_management_commands
+from commands.roll import setup_roll_commands
+from utils.config import setup_config
 
 
-# Setup config
 load_dotenv()
 config = setup_config()
-
-# Setup commands
-setup_roll_commands(config)
-setup_management_commands(config)
 
 
 @ config.client.event
 async def on_ready():
+    setup_roll_commands(config)
+    setup_management_commands(config)
+
     await config.tree.sync()
     config.logger.log(logging.INFO, f"Logged in as {config.client.user}")
 
@@ -30,6 +32,22 @@ def connect():
 @ config.sio.event
 def disconnect():
     config.logger.log(logging.INFO, "Disconnected from socket.io")
+
+
+async def close_and_disconnect_services():
+    _ = config.client.close()
+    config.sio.disconnect()
+
+
+def signal_handler(sig, _):
+    config.logger.log(logging.INFO, f"Received signal {sig}. Exiting...")
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(close_and_disconnect_services())
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":

@@ -3,8 +3,8 @@ import logging
 import os
 
 import discord
-import socketio
 import redis
+import socketio
 
 
 @dataclass
