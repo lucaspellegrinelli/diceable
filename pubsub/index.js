@@ -31,7 +31,6 @@ server.on('error', (err) => console.log(err));
 
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
-    // Close all websockets connections
     io.disconnectSockets();
     server.close(() => {
         process.exit(0);
