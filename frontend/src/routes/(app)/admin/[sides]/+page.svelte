@@ -5,8 +5,9 @@
 	import PlayerSkins from './PlayerSkins.svelte';
 	import type { PlayerSkin } from '$lib/types';
 	import { addToast } from '$lib/toasts';
-	import { A, Button, Heading, Hr, Spinner, Tooltip } from 'flowbite-svelte';
+	import { A, Button, Card, Heading, Hr, Spinner, Tooltip } from 'flowbite-svelte';
 	import Icon from '@iconify/svelte';
+	import Links from './Links.svelte';
 
 	const INVALID_PALETTE_NAME = 'Unknown';
 	const DEFAULT_EFFECT_NAME = 'None';
@@ -94,34 +95,28 @@
 		formData.append('player_skins', JSON.stringify(playerSkinsDict));
 
 		isSubmitting = true;
-		fetch("", {
+		fetch('', {
 			method: 'POST',
 			body: formData
-		}).then(() => {
-			addToast('Saved successfully', 'success');
-		}).catch((err) => {
-			addToast('Failed to save', 'error');
-			console.error(err);
-		}).finally(() => {
-			isSubmitting = false;
-		});
+		})
+			.then(() => {
+				addToast('Saved successfully', 'success');
+			})
+			.catch((err) => {
+				addToast('Failed to save', 'error');
+				console.error(err);
+			})
+			.finally(() => {
+				isSubmitting = false;
+			});
 	};
 </script>
 
 {#if $page.data.session}
-	<div class="container mx-auto mt-6">
-		<Heading class="inline-flex" tag="h2">
-			discord invite link
-			<A
-				href="https://discord.com/api/oauth2/authorize?client_id=1116110919953563729&permissions=1024&scope=bot"
-				target="_blank"
-			>
-				<Icon icon="mdi:discord" class="ml-3 mt-1" />
-			</A>
-			<Tooltip placement="right">click here to invite the bot to your server</Tooltip>
-		</Heading>
+	<div class="container mx-auto my-6">
+		<Heading tag="h2" class="mb-4">Dashboard</Heading>
 
-		<Hr class="mb-4 mt-6" height="h-px" style="z-index: -99" />
+        <Links user={data.user} />
 
 		<Configurations bind:customColors />
 
