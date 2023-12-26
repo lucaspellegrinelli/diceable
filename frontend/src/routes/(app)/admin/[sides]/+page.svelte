@@ -113,8 +113,8 @@
 </script>
 
 {#if $page.data.session}
-	<div class="container mx-auto my-6">
-		<Heading tag="h2" class="mb-4">Dashboard</Heading>
+	<div class="container mx-auto my-6 px-4">
+		<Heading tag="h2" class="mb-4">dashboard</Heading>
 
         <Links user={data.user} />
 

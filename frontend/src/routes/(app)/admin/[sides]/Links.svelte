@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="grid w-full grid-cols-2 gap-2 mb-6">
+<div class="grid w-full grid-cols-1 md:grid-cols-2 gap-2 mb-6">
 	<Card size="xl" class="flex flex-col items-center">
 		<Icon icon="mdi:discord" class="text-4xl text-center text-gray-900 dark:text-white" />
 		<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
