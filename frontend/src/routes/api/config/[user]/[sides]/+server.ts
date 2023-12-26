@@ -1,5 +1,5 @@
 import { redisClient } from '$lib/redisConnection';
-import { getDefaultDiceConfig } from '../../utils';
+import { getDefaultDiceConfig, getDefaultConfig } from '../../utils';
 
 type UserDiceConfig = {
     custom_colors: string,
@@ -15,7 +15,12 @@ const diceSideCount: { [key: string]: number } = {
 export async function GET({ params }) {
     const userUUID = params.user;
     const diceSides = params.sides;
-    const userConfig = await redisClient.hGet('user-configs', userUUID);
+    let userConfig = await redisClient.hGet('user-configs', userUUID);
+
+    if (!userConfig) {
+        await redisClient.hSet('user-configs', userUUID, getDefaultConfig(userUUID));
+        userConfig = await redisClient.hGet('user-configs', userUUID);
+    }
 
     const userConfigJson = JSON.parse(userConfig);
 
