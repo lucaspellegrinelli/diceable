@@ -15,17 +15,15 @@
 	};
 </script>
 
-<div class="w-full h-full">
-	{#each $toasts as toast}
-		<Toast position="bottom-right" color={toastColor(toast.type)}>
-			<svelte:fragment slot="icon">
-				{#if toast.type === 'success'}
-					<Icon icon="mdi:check" class="inline-block" />
-				{:else if toast.type === 'error'}
-					<Icon icon="mdi:alert" class="inline-block" />
-				{/if}
-			</svelte:fragment>
-			<span>{toast.message}</span>
-		</Toast>
-	{/each}
-</div>
+{#each $toasts as toast}
+	<Toast position="top-right" class="fixed z-1001" color={toastColor(toast.type)}>
+		<svelte:fragment slot="icon">
+			{#if toast.type === 'success'}
+				<Icon icon="mdi:check" class="inline-block" />
+			{:else if toast.type === 'error'}
+				<Icon icon="mdi:alert" class="inline-block" />
+			{/if}
+		</svelte:fragment>
+		<span>{toast.message}</span>
+	</Toast>
+{/each}

@@ -5,7 +5,17 @@
 	import PlayerSkins from './PlayerSkins.svelte';
 	import type { PlayerSkin } from '$lib/types';
 	import { addToast } from '$lib/toasts';
-	import { A, Button, Card, Heading, Hr, Spinner, Tooltip } from 'flowbite-svelte';
+	import {
+		A,
+		Button,
+		Card,
+		Heading,
+		Hr,
+		SpeedDial,
+		SpeedDialButton,
+		Spinner,
+		Tooltip
+	} from 'flowbite-svelte';
 	import Icon from '@iconify/svelte';
 	import Links from './Links.svelte';
 
@@ -116,7 +126,7 @@
 	<div class="container mx-auto my-6 px-4">
 		<Heading tag="h2" class="mb-4">dashboard</Heading>
 
-        <Links user={data.user} />
+		<Links user={data.user} />
 
 		<Configurations bind:customColors />
 
@@ -128,16 +138,15 @@
 
 		<PlayerSkins {palettes} bind:playerSkins effectOptions={data.effects} />
 
-		<Hr class="my-8" height="h-px" style="z-index: -99" />
-
-		<Button class="w-48" on:click={saveData}>
-			{#if isSubmitting}
-				<Spinner class="mr-4" size="4" color="white" />
-				Saving...
-			{:else}
-				Save
-			{/if}
-		</Button>
+		<SpeedDial defaultClass="fixed end-6 md:end-24 bottom-6" tooltip="none" textOutside>
+			<SpeedDialButton name="Save" on:click={saveData}>
+				{#if isSubmitting}
+					<Spinner class="absolute top-0 left-0 w-full h-full" />
+                {:else}
+                    <Icon icon="mdi:content-save" class="text-2xl" />
+				{/if}
+			</SpeedDialButton>
+		</SpeedDial>
 	</div>
 {:else}
 	<a href="/auth/signin" class="btn btn-primary" data-sveltekit-preload-data="off">Sign in</a>

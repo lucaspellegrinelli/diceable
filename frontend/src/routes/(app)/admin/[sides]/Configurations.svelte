@@ -18,26 +18,4 @@
 			Enable this to use the custom color palettes chosen below for the players.
 		</p>
 	</Card>
-	<Card size="xl" class="flex flex-col">
-		<div class="flex flex-row items-center justify-start mb-2">
-			<h5 class="mr-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				Custom colors
-			</h5>
-			<Toggle bind:checked={customColors}></Toggle>
-		</div>
-		<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-			Enable this to use the custom color palettes chosen below for the players.
-		</p>
-	</Card>
-	<Card size="xl" class="flex flex-col">
-		<div class="flex flex-row items-center justify-start mb-2">
-			<h5 class="mr-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				Custom colors
-			</h5>
-			<Toggle bind:checked={customColors}></Toggle>
-		</div>
-		<p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-			Enable this to use the custom color palettes chosen below for the players.
-		</p>
-	</Card>
 </div>
