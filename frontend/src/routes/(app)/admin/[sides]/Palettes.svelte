@@ -115,6 +115,7 @@
 													src={skinUrl(diceSkinName, (skinIndex + 1) % palette.skin.length)}
 													class="w-24 mr-2"
 													alt="{skinName} dice"
+                                                    loading="lazy"
 												/>
 												<span class="flex-1">{capitalize(diceSkinName)}</span>
 											</div>

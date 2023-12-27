@@ -13,6 +13,12 @@ export type PlayerSkin = {
     effect?: string;
 };
 
+export type Palette = {
+    name: string;
+    skin: string[];
+    default: boolean;
+};
+
 export type Config = {
     custom_colors: string;
     palettes: { [key: string]: string[] };
