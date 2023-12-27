@@ -7,22 +7,18 @@
 
 	export let data: PageData;
 
-	let playerSkins = data.playerSkins;
-	const effectOptions = data.effects;
-	const palettes = data.palettes;
-
 	const addNewPlayerSkin = () => {
 		const newPlayerSkin = {
 			discordId: '',
 			description: '',
-			palette: palettes[0].name,
+			palette: data.palettes[0].name,
 			effect: 'None'
 		};
-		playerSkins = [...playerSkins, newPlayerSkin];
+		data.playerSkins = [...data.playerSkins, newPlayerSkin];
 	};
 
 	const deletePlayerSkin = (index: number) => {
-		playerSkins = playerSkins.filter((_, i) => i !== index);
+		data.playerSkins = data.playerSkins.filter((_, i) => i !== index);
 	};
 </script>
 
@@ -36,11 +32,11 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
-		{#each playerSkins as playerSkin, playerSkinIndex}
+		{#each data.playerSkins as playerSkin, playerSkinIndex}
 			<PlayerSkinEditor
 				{playerSkin}
-				{palettes}
-				{effectOptions}
+				palettes={data.palettes}
+				effectOptions={data.effects}
 				on:delete={() => deletePlayerSkin(playerSkinIndex)}
 			/>
 		{/each}

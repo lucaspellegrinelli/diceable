@@ -1,5 +1,3 @@
-import type { Session } from '@auth/core/types';
-
 export type Toast = {
     message: string;
     type: "success" | "error";
@@ -19,9 +17,13 @@ export type Palette = {
     default: boolean;
 };
 
-export type Config = {
+export type DiceConfig = {
     custom_colors: string;
     palettes: { [key: string]: string[] };
-    default_palette: string;
     player_skins: { [key: string]: PlayerSkin };
+    default_palette: string;
+};
+
+export type UserConfig = {
+    [key: string]: DiceConfig;
 };

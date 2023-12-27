@@ -7,27 +7,25 @@
 
 	export let data: PageData;
 
-	let palettes = data.palettes;
-	const dice = data.dice;
-	const diceSides = dice.length;
+	const diceSides = data.dice.length;
 
 	const createNewPalette = (name: string) => ({
 		name: name,
-		skin: Array(diceSides).fill(dice[0]),
-		default: palettes.length === 0
+		skin: Array(diceSides).fill(data.dice[0]),
+		default: data.palettes.length === 0
 	});
 
 	const addNewPalette = () => {
 		const id = Math.random().toString(36).substring(7);
-		palettes = [...palettes, createNewPalette(id)];
+		data.palettes = [...data.palettes, createNewPalette(id)];
 	};
 
 	const removePalette = (paletteIndex: number) => {
-		palettes = palettes.filter((_, index) => index !== paletteIndex);
+		data.palettes = data.palettes.filter((_, index) => index !== paletteIndex);
 	};
 
 	const setDefaultPalette = (paletteIndex: number) => {
-		palettes = palettes.map((palette, index) => {
+		data.palettes = data.palettes.map((palette, index) => {
 			palette.default = index === paletteIndex;
 			return palette;
 		});
@@ -42,10 +40,10 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 lg:grid-cols-2 gap-2 mb-6">
-		{#each palettes as palette, paletteIndex}
+		{#each data.palettes as palette, paletteIndex}
 			<PaletteEditor
 				{palette}
-				{dice}
+                dice={data.dice}
 				on:delete={() => removePalette(paletteIndex)}
 				on:setdefault={() => setDefaultPalette(paletteIndex)}
 			/>

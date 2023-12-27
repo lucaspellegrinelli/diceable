@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import type { PageServerLoadData, Config, PlayerSkin, Palette } from '$lib/types';
+import type { DiceConfig, PlayerSkin, Palette } from '$lib/types';
 
-export const load: PageServerLoad<PageServerLoadData> = async (event) => {
+export const load = async (event: any) => {
     const session = await event.locals.getSession();
     if (!session?.user) {
         throw redirect(303, '/auth');
@@ -20,7 +19,7 @@ export const load: PageServerLoad<PageServerLoadData> = async (event) => {
         event.fetch(`/api/assets/dice/${sides}`)
     ]);
 
-    const [config, effects, dice]: [Config, string[], string[]] = await Promise.all([
+    const [config, effects, dice]: [DiceConfig, string[], string[]] = await Promise.all([
         configRes.json(),
         effectRes.json(),
         diceRes.json()
