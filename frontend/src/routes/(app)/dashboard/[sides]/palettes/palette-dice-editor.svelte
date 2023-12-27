@@ -5,13 +5,13 @@
 
 	export let dice: string[];
 	export let palette: Palette;
+	const diceSides = palette.skin.length;
 
 	const chooseSkin = (skinIndex: number, skinName: string): any => {
 		palette.skin[skinIndex] = skinName;
 	};
 
 	const skinUrl = (skin: string, number: number) => {
-		const diceSides = dice.length;
 		return `https://assets.togarashi.app/dice/d${diceSides}/${skin}/${number}.png`;
 	};
 

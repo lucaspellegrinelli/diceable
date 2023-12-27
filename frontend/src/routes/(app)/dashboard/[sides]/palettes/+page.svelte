@@ -6,8 +6,7 @@
 	import PaletteEditor from './palette-editor.svelte';
 
 	export let data: PageData;
-
-	const diceSides = data.dice.length;
+	const diceSides = data.palettes[0].skin.length;
 
 	const createNewPalette = (name: string) => ({
 		name: name,
