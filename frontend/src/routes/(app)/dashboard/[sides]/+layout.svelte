@@ -6,22 +6,26 @@
 	export let data: PageData;
 	const diceSides = data.palettes[0].skin.length;
 
+	const createUrl = (path: string) => {
+		return `/dashboard/d${diceSides}/${path}`;
+	};
+
 	const sidebarNavItems = [
 		{
 			title: 'Home',
-			href: `/admin/d${diceSides}`
+			href: createUrl('')
 		},
 		{
 			title: 'Configuration',
-			href: `/admin/d${diceSides}/configuration`
+			href: createUrl('configuration')
 		},
 		{
 			title: 'Palettes',
-			href: `/admin/d${diceSides}/palettes`
+			href: createUrl('palettes')
 		},
 		{
 			title: 'Player Skins',
-			href: `/admin/d${diceSides}/playerskins`
+			href: createUrl('playerskins')
 		}
 	];
 </script>
