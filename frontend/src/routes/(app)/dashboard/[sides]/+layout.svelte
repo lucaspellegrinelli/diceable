@@ -7,7 +7,7 @@
 	const diceSides = data.palettes[0].skin.length;
 
 	const createUrl = (path: string) => {
-		return `/dashboard/d${diceSides}/${path}`;
+		return `/dashboard/d${diceSides}${path}`;
 	};
 
 	const sidebarNavItems = [
@@ -17,15 +17,15 @@
 		},
 		{
 			title: 'Configuration',
-			href: createUrl('configuration')
+			href: createUrl('/configuration')
 		},
 		{
 			title: 'Palettes',
-			href: createUrl('palettes')
+			href: createUrl('/palettes')
 		},
 		{
 			title: 'Player Skins',
-			href: createUrl('playerskins')
+			href: createUrl('/playerskins')
 		}
 	];
 </script>

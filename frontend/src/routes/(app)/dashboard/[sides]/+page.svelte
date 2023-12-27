@@ -4,8 +4,9 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
-	export let user: string;
+	export let data: PageData;
 	let obsTutorialModal = false;
 
 	let obsLink = '';
@@ -16,7 +17,7 @@
 
 	onMount(() => {
 		const currentHost = window.location.host;
-		obsLink = `https://${currentHost}/${user}`;
+		obsLink = `https://${currentHost}/${data.user}`;
 	});
 </script>
 
@@ -75,7 +76,3 @@
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>
-<!-- <Modal title="OBS Setup" bind:open={obsTutorialModal} autoclose class="space-y-2"> -->
-<!---->
-<!-- 	<Button color="alternative">Close</Button> -->
-<!-- </Modal> -->
