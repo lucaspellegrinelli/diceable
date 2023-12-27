@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Separator } from '$lib/components/ui/separator';
+    import { Card } from '$lib/components/ui/card';
 	import { Plus } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import PaletteEditor from './palette-editor.svelte';
-	import { Card } from '$lib/components/ui/card';
 
 	export let data: PageData;
 
@@ -51,7 +51,7 @@
 			/>
 		{/each}
 
-		<Card on:click={addNewPalette}>
+		<Card>
 			<button
 				class="flex w-full h-full cursor-pointer items-center justify-center min-h-32"
 				on:click={addNewPalette}
