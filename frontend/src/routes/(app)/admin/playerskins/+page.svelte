@@ -8,7 +8,7 @@
 	export let data: PageData;
 
 	let playerSkins = data.playerSkins;
-    const effectOptions = data.effects;
+	const effectOptions = data.effects;
 	const palettes = data.palettes;
 
 	const addNewPlayerSkin = () => {
@@ -19,6 +19,10 @@
 			effect: 'None'
 		};
 		playerSkins = [...playerSkins, newPlayerSkin];
+	};
+
+	const deletePlayerSkin = (index: number) => {
+		playerSkins = playerSkins.filter((_, i) => i !== index);
 	};
 </script>
 
@@ -32,8 +36,13 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
-		{#each playerSkins as playerSkin}
-			<PlayerSkinEditor {playerSkin} {palettes} {effectOptions} />
+		{#each playerSkins as playerSkin, playerSkinIndex}
+			<PlayerSkinEditor
+				{playerSkin}
+				{palettes}
+				{effectOptions}
+				on:delete={() => deletePlayerSkin(playerSkinIndex)}
+			/>
 		{/each}
 
 		<Card>

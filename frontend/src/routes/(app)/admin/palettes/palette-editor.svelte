@@ -19,7 +19,7 @@
 	<div class="flex flex-row gap-2">
 		<Tooltip.Root openDelay={0}>
 			<Tooltip.Trigger class="w-full">
-				<Input type="text" placeholder="Palette name" value={palette.name} />
+				<Input type="text" placeholder="Palette name" bind:value={palette.name} />
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Palette name</p>

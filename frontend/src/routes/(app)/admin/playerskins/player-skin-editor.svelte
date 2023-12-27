@@ -35,7 +35,7 @@
 	<div class="flex flex-row gap-2">
 		<Tooltip.Root openDelay={0}>
 			<Tooltip.Trigger class="w-full">
-				<Input type="text" placeholder="Discord ID" value={playerSkin.discordId} />
+				<Input type="text" placeholder="Discord ID" bind:value={playerSkin.discordId} />
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Discord ID of the player</p>
@@ -61,7 +61,7 @@
 	</div>
 	<Tooltip.Root openDelay={0}>
 		<Tooltip.Trigger class="w-full">
-			<Input type="text" placeholder="Player description" value={playerSkin.description} />
+			<Input type="text" placeholder="Player description" bind:value={playerSkin.description} />
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Just a description for you to remember who is who</p>
