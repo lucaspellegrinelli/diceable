@@ -43,7 +43,7 @@
 
 		<Card>
 			<button
-				class="flex w-full h-full cursor-pointer items-center justify-center min-h-32"
+				class="flex w-full h-full cursor-pointer items-center justify-center min-h-56"
 				on:click={addNewPlayerSkin}
 			>
 				<Plus size={28} />
