@@ -5,9 +5,11 @@
 	import { Loader, Save } from 'lucide-svelte';
 	import { currentSides, availableDiceSkins, availableEffects, diceConfig } from '$lib/stores';
 	import { get } from 'svelte/store';
-	import { convertLocalConfig, fetchSkinsAndEffects } from '$lib/config';
+	import { convertLocalConfig, fetchSkinsAndEffects, parseServerConfig } from '$lib/config';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
+	import type { UserConfig } from 'vite';
+	import type { DiceConfig } from '$lib/types';
 
 	export let data: PageData;
 	const { user, config } = data;
@@ -15,8 +17,11 @@
 	diceConfig.set(config);
 
 	let isSubmitting = false;
-
 	let diceSides = get(currentSides);
+
+	currentSides.subscribe((value) => {
+		diceSides = value;
+	});
 
 	onMount(async () => {
 		fetchSkinsAndEffects(diceSides)
@@ -53,6 +58,27 @@
 	const changeDiceSides = (e: any) => {
 		selectedDiceSides = { value: e.value, label: e.label };
 		currentSides.set(e.value);
+
+		fetchSkinsAndEffects(diceSides)
+			.then(({ diceSkins, effects }) => {
+				availableDiceSkins.set(diceSkins);
+				availableEffects.set(effects);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+
+		fetch(`/api/config/${user}/${e.value}`)
+			.then((res) => {
+				if (res.ok) {
+					res.json().then((config: DiceConfig) => diceConfig.set(parseServerConfig(config)));
+				} else {
+					console.error(res);
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 	};
 
 	const saveChanges = async () => {

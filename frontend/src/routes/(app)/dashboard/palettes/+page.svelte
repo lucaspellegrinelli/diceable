@@ -11,6 +11,11 @@
 		diceSideCount = parseInt(value.slice(1));
 	});
 
+    $: {
+        console.log(diceSideCount);
+        console.log(get(diceConfig));
+    }
+
 	const createNewPalette = (name: string) => ({
 		name: name,
 		skin: Array(diceSideCount).fill(get(availableDiceSkins)[0]),
@@ -51,7 +56,7 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 lg:grid-cols-2 gap-2 mb-6">
-		{#each $diceConfig?.palettes as palette, paletteIndex}
+		{#each $diceConfig.palettes as palette, paletteIndex}
 			<PaletteEditor
 				{palette}
 				dice={$availableDiceSkins}
