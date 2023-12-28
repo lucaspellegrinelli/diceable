@@ -5,16 +5,10 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { get } from 'svelte/store';
 	import { currentSides } from '$lib/stores';
 	import { Separator } from '$lib/components/ui/separator';
 
 	export let data: PageData;
-
-	let diceSides = get(currentSides);
-	currentSides.subscribe((value) => {
-		diceSides = value;
-	});
 
 	let obsTutorialModal = false;
 	let obsLink = '';
@@ -31,9 +25,9 @@
 
 <div class="mb-6 space-y-6">
 	<div>
-		<h3 class="text-lg font-medium">Editing {diceSides} sided dice</h3>
+		<h3 class="text-lg font-medium">Editing {$currentSides} sided dice</h3>
 		<p class="text-sm text-muted-foreground">
-			Define the configurations for the {diceSides} sided dice.
+			Define the configurations for the {$currentSides} sided dice.
 		</p>
 	</div>
 	<Separator />
