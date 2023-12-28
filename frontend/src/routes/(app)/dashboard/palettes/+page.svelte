@@ -11,32 +11,34 @@
 		diceSideCount = parseInt(value.slice(1));
 	});
 
-	let currentDiceConfig = get(diceConfig);
-	diceConfig.subscribe((value) => {
-		currentDiceConfig = value;
-	});
-
 	const createNewPalette = (name: string) => ({
 		name: name,
 		skin: Array(diceSideCount).fill(get(availableDiceSkins)[0]),
-		default: currentDiceConfig!.palettes.length === 0
+		default: get(diceConfig).palettes.length === 0
 	});
 
 	const addNewPalette = () => {
 		const id = Math.random().toString(36).substring(7);
-		currentDiceConfig!.palettes = [...currentDiceConfig!.palettes, createNewPalette(id)];
+		diceConfig.update((value) => {
+			value.palettes = [...value.palettes, createNewPalette(id)];
+			return value;
+		});
 	};
 
 	const removePalette = (paletteIndex: number) => {
-		currentDiceConfig!.palettes = currentDiceConfig!.palettes.filter(
-			(_, index) => index !== paletteIndex
-		);
+		diceConfig.update((value) => {
+			value.palettes = value.palettes.filter((_, index) => index !== paletteIndex);
+			return value;
+		});
 	};
 
 	const setDefaultPalette = (paletteIndex: number) => {
-		currentDiceConfig!.palettes = currentDiceConfig!.palettes.map((palette, index) => {
-			palette.default = index === paletteIndex;
-			return palette;
+		diceConfig.update((value) => {
+			value.palettes = value.palettes.map((palette, index) => {
+				palette.default = index === paletteIndex;
+				return palette;
+			});
+			return value;
 		});
 	};
 </script>

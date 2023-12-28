@@ -6,23 +6,25 @@
 	import { availableEffects, diceConfig } from '$lib/stores';
 	import { get } from 'svelte/store';
 
-	let currentDiceConfig = get(diceConfig);
-	diceConfig.subscribe((value) => {
-		currentDiceConfig = value;
-	});
-
 	const addNewPlayerSkin = () => {
 		const newPlayerSkin = {
 			discordId: '',
 			description: '',
-			palette: currentDiceConfig!.palettes[0].name,
+			palette: get(diceConfig).palettes[0].name,
 			effect: 'None'
 		};
-		currentDiceConfig!.playerSkins = [...currentDiceConfig!.playerSkins, newPlayerSkin];
+
+        diceConfig.update((value) => {
+            value.playerSkins = [...value.playerSkins, newPlayerSkin];
+            return value;
+        });
 	};
 
 	const deletePlayerSkin = (index: number) => {
-		currentDiceConfig!.playerSkins = currentDiceConfig!.playerSkins.filter((_, i) => i !== index);
+        diceConfig.update((value) => {
+            value.playerSkins = value.playerSkins.filter((_, i) => i !== index);
+            return value;
+        });
 	};
 </script>
 
