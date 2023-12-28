@@ -1,11 +1,11 @@
 <script lang="ts">
-	import LoadingBlocker from '$lib/LoadingBlocker.svelte';
+	import LoadingBlocker from '$lib/components/LoadingBlocker.svelte';
+	import ToastHandler from '$lib/components/ToastHandler.svelte';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import '../../app.pcss';
 	import { ModeWatcher } from 'mode-watcher';
 
 	import { loadingBlocker } from '$lib/stores';
-	import ToastHandler from '$lib/ToastHandler.svelte';
 </script>
 
 <svelte:head>

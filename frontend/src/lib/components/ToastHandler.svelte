@@ -1,8 +1,8 @@
 <script lang="ts">
 	import * as Alert from '$lib/components/ui/alert';
-	import { toasts } from './stores';
+	import { toasts } from '$lib/stores';
+    import type { Toast } from '$lib/types';
 	import { AlertTriangle, Check, ChevronRight } from 'lucide-svelte';
-	import type { Toast } from './types';
 	import { fade } from 'svelte/transition';
 
 	const successClasses = 'bg-green-200 border-green-400 dark:bg-slate-900 dark:border-green-600';
