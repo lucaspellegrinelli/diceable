@@ -4,9 +4,10 @@
 	import Sidebar from '$lib/components/ui/sidebar/sidebar.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import { Loader, Save } from 'lucide-svelte';
-	import { availableDiceSkins, availableEffects, currentSides, diceConfig } from '$lib/stores';
+	import { availableDiceSkins, availableEffects, currentSides, diceConfig, loadingBlocker } from '$lib/stores';
 	import { get } from 'svelte/store';
 	import { saveConfig, updateCurrentConfig } from '$lib/config';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -46,10 +47,14 @@
 		selectedDiceSides = { value: e.value, label: e.label };
 		currentSides.set(e.value);
 
+        loadingBlocker.set(true);
 		const newData = await updateCurrentConfig(data.user, e.value);
         diceConfig.set(newData.config);
         availableEffects.set(newData.effects);
         availableDiceSkins.set(newData.diceSkins);
+
+        await goto('/dashboard');
+        loadingBlocker.set(false);
 	};
 
 	const saveChanges = async () => {

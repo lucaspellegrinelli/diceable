@@ -6,6 +6,7 @@ import type {
 
 
 export const toasts = writable<Toast[]>([]);
+export const loadingBlocker = writable<boolean>(false);
 
 export const currentSides = writable<"d10" | "d20">("d10");
 export const availableDiceSkins = writable<string[]>([]);

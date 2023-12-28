@@ -5,8 +5,16 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import { get } from 'svelte/store';
+	import { currentSides } from '$lib/stores';
+	import { Separator } from '$lib/components/ui/separator';
 
 	export let data: PageData;
+
+	let diceSides = get(currentSides);
+	currentSides.subscribe((value) => {
+		diceSides = value;
+	});
 
 	let obsTutorialModal = false;
 	let obsLink = '';
@@ -21,6 +29,15 @@
 	});
 </script>
 
+<div class="mb-6 space-y-6">
+	<div>
+		<h3 class="text-lg font-medium">Editing {diceSides} sided dice</h3>
+		<p class="text-sm text-muted-foreground">
+			Define the configurations for the {diceSides} sided dice.
+		</p>
+	</div>
+	<Separator />
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
 	<Card class="flex flex-col items-center justify-between p-4 text-center">
 		<Icon icon="mdi:discord" class="text-4xl" />
