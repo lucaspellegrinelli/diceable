@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import '../../app.pcss';
 	import { ModeWatcher } from 'mode-watcher';

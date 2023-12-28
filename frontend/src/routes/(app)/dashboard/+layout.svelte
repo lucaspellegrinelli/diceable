@@ -1,37 +1,24 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import { Separator } from '$lib/components/ui/separator';
 	import Sidebar from '$lib/components/ui/sidebar/sidebar.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import { Loader, Save } from 'lucide-svelte';
-	import { currentSides, availableDiceSkins, availableEffects, diceConfig } from '$lib/stores';
+	import { availableDiceSkins, availableEffects, currentSides, diceConfig } from '$lib/stores';
 	import { get } from 'svelte/store';
-	import { convertLocalConfig, fetchSkinsAndEffects, parseServerConfig } from '$lib/config';
-	import type { PageData } from './$types';
-	import { onMount } from 'svelte';
-	import type { UserConfig } from 'vite';
-	import type { DiceConfig } from '$lib/types';
+	import { saveConfig, updateCurrentConfig } from '$lib/config';
 
 	export let data: PageData;
-	const { user, config } = data;
 
-	diceConfig.set(config);
+	diceConfig.set(data.config);
+	availableEffects.set(data.effects);
+	availableDiceSkins.set(data.diceSkins);
 
 	let isSubmitting = false;
-	let diceSides = get(currentSides);
 
+	let diceSides = get(currentSides);
 	currentSides.subscribe((value) => {
 		diceSides = value;
-	});
-
-	onMount(async () => {
-		fetchSkinsAndEffects(diceSides)
-			.then(({ diceSkins, effects }) => {
-				availableDiceSkins.set(diceSkins);
-				availableEffects.set(effects);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
 	});
 
 	const sidebarNavItems = [
@@ -55,52 +42,20 @@
 
 	let selectedDiceSides = { value: `${diceSides}`, label: `Configuring ${diceSides}` };
 
-	const changeDiceSides = (e: any) => {
+	const changeDiceSides = async (e: any) => {
 		selectedDiceSides = { value: e.value, label: e.label };
 		currentSides.set(e.value);
 
-		fetchSkinsAndEffects(diceSides)
-			.then(({ diceSkins, effects }) => {
-				availableDiceSkins.set(diceSkins);
-				availableEffects.set(effects);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
-
-		fetch(`/api/config/${user}/${e.value}`)
-			.then((res) => {
-				if (res.ok) {
-					res.json().then((config: DiceConfig) => diceConfig.set(parseServerConfig(config)));
-				} else {
-					console.error(res);
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		const newData = await updateCurrentConfig(data.user, e.value);
+        diceConfig.set(newData.config);
+        availableEffects.set(newData.effects);
+        availableDiceSkins.set(newData.diceSkins);
 	};
 
 	const saveChanges = async () => {
 		const userDiceConfig = get(diceConfig);
 		const diceSides = get(currentSides);
-
-		const serverDiceConfig = convertLocalConfig(userDiceConfig);
-		const url = `/api/config/${user}/${diceSides}`;
-
-		fetch(url, {
-			method: 'POST',
-			body: JSON.stringify(serverDiceConfig)
-		})
-			.then(() => {
-				console.log('Saved');
-			})
-			.catch((err) => {
-				console.error(err);
-			})
-			.finally(() => {
-				isSubmitting = false;
-			});
+		saveConfig(data.user, diceSides, userDiceConfig);
 	};
 </script>
 

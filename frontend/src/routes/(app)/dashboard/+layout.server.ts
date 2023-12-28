@@ -1,5 +1,4 @@
-import { parseServerConfig } from '$lib/config';
-import type { DiceConfig } from '$lib/types';
+import { updateCurrentConfig } from '$lib/config';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async (event: any) => {
@@ -10,12 +9,13 @@ export const load = async (event: any) => {
 
     const user = session?.user?.image?.split('avatars/')[1]?.split('/')[0] || '';
 
-    const configRes = await event.fetch(`/api/config/${user}/d10`);
-    const config: DiceConfig = await configRes.json();
+    const { effects, diceSkins, config } = await updateCurrentConfig(user, 'd10', event.fetch);
 
     return {
         session,
         user,
-        config: parseServerConfig(config)
+        effects,
+        diceSkins,
+        config
     };
 };

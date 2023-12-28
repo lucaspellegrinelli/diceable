@@ -3,35 +3,41 @@ import type { DiceConfig, LocalDiceConfig, LocalPalette, PlayerSkin } from "./ty
 export const INVALID_PALETTE_NAME = 'Unknown';
 export const DEFAULT_EFFECT_NAME = 'None';
 
-export const parseServerConfig = (config: DiceConfig): LocalDiceConfig => {
-    const palettes: LocalPalette[] = [];
-    const playerSkins: PlayerSkin[] = [];
-
-    for (const [paletteName, paletteColors] of Object.entries(config.palettes)) {
-        const isDefault = paletteName === config.default_palette;
-        palettes.push({ name: paletteName, skin: paletteColors, default: isDefault });
+export const updateCurrentConfig = async (user: string, sides: 'd10' | 'd20', fetchFunc?: any) => {
+    if (!fetchFunc) {
+        fetchFunc = fetch;
     }
 
-    for (const [discordId, playerSkin] of Object.entries(config.player_skins)) {
-        const playerPalette = playerSkin.palette || INVALID_PALETTE_NAME;
-        const playerEffect = playerSkin.effect || DEFAULT_EFFECT_NAME;
-        const playerDescription = playerSkin.description || '';
-        playerSkins.push({
-            discordId,
-            description: playerDescription,
-            palette: playerPalette,
-            effect: playerEffect
-        });
-    }
+    const [effectRes, diceRes, configRes] = await Promise.all([
+        fetchFunc(`/api/assets/effects/${sides}`),
+        fetchFunc(`/api/assets/dice/${sides}`),
+        fetchFunc(`/api/config/${user}/${sides}`)
+    ]);
+
+    const [effects, diceSkins, config]: [string[], string[], DiceConfig] = await Promise.all([
+        effectRes.json(),
+        diceRes.json(),
+        configRes.json()
+    ]);
 
     return {
-        customColors: config.custom_colors === 'true',
-        palettes,
-        playerSkins
+        effects,
+        diceSkins,
+        config: parseServerConfig(config)
     };
 }
 
-export const convertLocalConfig = (config: LocalDiceConfig): DiceConfig => {
+export const saveConfig = async (user: string, sides: 'd10' | 'd20', config: LocalDiceConfig) => {
+    const serverDiceConfig = convertLocalConfig(config);
+    const url = `/api/config/${user}/${sides}`;
+
+    await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(serverDiceConfig)
+    });
+}
+
+const convertLocalConfig = (config: LocalDiceConfig): DiceConfig => {
     const palettes: { [key: string]: string[] } = {};
     const playerSkins: { [key: string]: PlayerSkin } = {};
 
@@ -61,16 +67,30 @@ export const convertLocalConfig = (config: LocalDiceConfig): DiceConfig => {
     };
 }
 
-export const fetchSkinsAndEffects = async (sides: 'd10' | 'd20') => {
-    const [effectRes, diceRes] = await Promise.all([
-        fetch(`/api/assets/effects/${sides}`),
-        fetch(`/api/assets/dice/${sides}`)
-    ]);
+const parseServerConfig = (config: DiceConfig): LocalDiceConfig => {
+    const palettes: LocalPalette[] = [];
+    const playerSkins: PlayerSkin[] = [];
 
-    const [effects, diceSkins] = await Promise.all([
-        effectRes.json(),
-        diceRes.json()
-    ]);
+    for (const [paletteName, paletteColors] of Object.entries(config.palettes)) {
+        const isDefault = paletteName === config.default_palette;
+        palettes.push({ name: paletteName, skin: paletteColors, default: isDefault });
+    }
 
-    return { effects, diceSkins };
+    for (const [discordId, playerSkin] of Object.entries(config.player_skins)) {
+        const playerPalette = playerSkin.palette || INVALID_PALETTE_NAME;
+        const playerEffect = playerSkin.effect || DEFAULT_EFFECT_NAME;
+        const playerDescription = playerSkin.description || '';
+        playerSkins.push({
+            discordId,
+            description: playerDescription,
+            palette: playerPalette,
+            effect: playerEffect
+        });
+    }
+
+    return {
+        customColors: config.custom_colors === 'true',
+        palettes,
+        playerSkins
+    };
 }
