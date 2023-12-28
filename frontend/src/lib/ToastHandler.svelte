@@ -1,29 +1,46 @@
 <script lang="ts">
-	import { Toast } from 'flowbite-svelte';
-	import Icon from '@iconify/svelte';
+	import * as Alert from '$lib/components/ui/alert';
 	import { toasts } from './stores';
+	import { AlertTriangle, Check, ChevronRight } from 'lucide-svelte';
+	import type { Toast } from './types';
 
-	const toastColor = (type: string) => {
-		switch (type) {
-			case 'success':
-				return 'green';
-			case 'error':
-				return 'red';
-			default:
-				return 'gray';
+	const successClasses = 'z-1000 bg-green-200 border-green-400 dark:bg-slate-900 dark:border-green-600';
+	const errorClasses = 'bg-red-200 border-red-400 dark:bg-slate-900 dark:border-red-600';
+	const neutralClasses = 'bg-white border-gray-300 dark:bg-slate-900 dark:border-gray-600';
+
+	const getToastClasses = (toast: Toast): string => {
+		if (toast.type === 'success') {
+			return successClasses;
+		} else if (toast.type === 'error') {
+			return errorClasses;
+		} else {
+			return neutralClasses;
+		}
+	};
+
+	const getToastTitle = (toast: Toast): string => {
+		if (toast.type === 'success') {
+			return 'Success';
+		} else if (toast.type === 'error') {
+			return 'Error';
+		} else {
+			return 'Info';
 		}
 	};
 </script>
 
-{#each $toasts as toast}
-	<Toast position="top-right" class="fixed z-1001" color={toastColor(toast.type)}>
-		<svelte:fragment slot="icon">
+<div class="fixed top-0 right-0 m-4 space-y-2 w-1/2 md:w-1/3 lg:w-1/4">
+	{#each $toasts as toast}
+		<Alert.Root class={getToastClasses(toast)}>
 			{#if toast.type === 'success'}
-				<Icon icon="mdi:check" class="inline-block" />
+				<Check class="h-4 w-4" />
 			{:else if toast.type === 'error'}
-				<Icon icon="mdi:alert" class="inline-block" />
+				<AlertTriangle class="h-4 w-4" />
+			{:else}
+				<ChevronRight class="h-4 w-4" />
 			{/if}
-		</svelte:fragment>
-		<span>{toast.message}</span>
-	</Toast>
-{/each}
+			<Alert.Title>{getToastTitle(toast)}</Alert.Title>
+			<Alert.Description>{toast.message}</Alert.Description>
+		</Alert.Root>
+	{/each}
+</div>

@@ -4,10 +4,18 @@
 	import Sidebar from '$lib/components/ui/sidebar/sidebar.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import { Loader, Save } from 'lucide-svelte';
-	import { availableDiceSkins, availableEffects, currentSides, diceConfig, loadingBlocker } from '$lib/stores';
+	import {
+		availableDiceSkins,
+		availableEffects,
+		currentSides,
+		diceConfig,
+		loadingBlocker,
+		toasts
+	} from '$lib/stores';
 	import { get } from 'svelte/store';
 	import { saveConfig, updateCurrentConfig } from '$lib/config';
 	import { goto } from '$app/navigation';
+	import { addToast } from '$lib/toasts';
 
 	export let data: PageData;
 
@@ -47,25 +55,43 @@
 		selectedDiceSides = { value: e.value, label: e.label };
 		currentSides.set(e.value);
 
-        loadingBlocker.set(true);
-		const newData = await updateCurrentConfig(data.user, e.value);
-        diceConfig.set(newData.config);
-        availableEffects.set(newData.effects);
-        availableDiceSkins.set(newData.diceSkins);
+		loadingBlocker.set(true);
 
-        await goto('/dashboard');
-        loadingBlocker.set(false);
+		try {
+			const newData = await updateCurrentConfig(data.user, e.value);
+			diceConfig.set(newData.config);
+			availableEffects.set(newData.effects);
+			availableDiceSkins.set(newData.diceSkins);
+
+			await goto('/dashboard');
+		} catch (e) {
+			console.error(e);
+			addToast('An error occurred while changing the dice sides.', 'error');
+		} finally {
+			loadingBlocker.set(false);
+		}
 	};
 
 	const saveChanges = async () => {
 		const userDiceConfig = get(diceConfig);
 		const diceSides = get(currentSides);
-		saveConfig(data.user, diceSides, userDiceConfig);
+
+		isSubmitting = true;
+
+		try {
+			await saveConfig(data.user, diceSides, userDiceConfig);
+			addToast('Configuration saved successfully.', 'success');
+		} catch (e) {
+			console.error(e);
+			addToast('An error occurred while saving the configuration.', 'error');
+		} finally {
+			isSubmitting = false;
+		}
 	};
 </script>
 
 <button
-	class="absolute bottom-0 right-0 mb-5 mr-5 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-black cursor-pointer p-5"
+	class="fixed bottom-0 right-0 mb-5 mr-5 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-black cursor-pointer p-5"
 	on:click={saveChanges}
 >
 	{#if isSubmitting}

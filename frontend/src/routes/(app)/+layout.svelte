@@ -5,12 +5,14 @@
 	import { ModeWatcher } from 'mode-watcher';
 
 	import { loadingBlocker } from '$lib/stores';
+	import ToastHandler from '$lib/ToastHandler.svelte';
 </script>
 
 <svelte:head>
 	<title>Diceable</title>
 </svelte:head>
 
+<ToastHandler />
 <LoadingBlocker bind:enabled={$loadingBlocker} />
 <DarkModeToggle />
 <ModeWatcher />
