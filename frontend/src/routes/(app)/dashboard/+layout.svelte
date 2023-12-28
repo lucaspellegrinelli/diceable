@@ -22,14 +22,9 @@
 	diceConfig.set(data.config);
 	availableEffects.set(data.effects);
 	availableDiceSkins.set(data.diceSkins);
-    currentSides.set(data.dice);
+	currentSides.set(data.dice);
 
 	let isSubmitting = false;
-
-	let diceSides = get(currentSides);
-	currentSides.subscribe((value) => {
-		diceSides = value;
-	});
 
 	const sidebarNavItems = [
 		{
@@ -50,7 +45,10 @@
 		}
 	];
 
-	let selectedDiceSides = { value: `${diceSides}`, label: `Configuring ${diceSides}` };
+	let selectedDiceSides = {
+		value: `${get(currentSides)}`,
+		label: `Configuring ${get(currentSides)}`
+	};
 
 	const changeDiceSides = async (e: any) => {
 		selectedDiceSides = { value: e.value, label: e.label };
@@ -64,7 +62,7 @@
 			availableEffects.set(newData.effects);
 			availableDiceSkins.set(newData.diceSkins);
 
-            document.cookie = `defaultdice=${e.value}; path=/`;
+			document.cookie = `defaultdice=${e.value}; path=/`;
 			await goto('/dashboard');
 		} catch (e) {
 			console.error(e);
