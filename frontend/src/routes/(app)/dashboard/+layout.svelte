@@ -9,8 +9,7 @@
 		availableEffects,
 		currentSides,
 		diceConfig,
-		loadingBlocker,
-		toasts
+		loadingBlocker
 	} from '$lib/stores';
 	import { get } from 'svelte/store';
 	import { saveConfig, updateCurrentConfig } from '$lib/config';

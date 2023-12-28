@@ -11,11 +11,6 @@
 		diceSideCount = parseInt(value.slice(1));
 	});
 
-    $: {
-        console.log(diceSideCount);
-        console.log(get(diceConfig));
-    }
-
 	const createNewPalette = (name: string) => ({
 		name: name,
 		skin: Array(diceSideCount).fill(get(availableDiceSkins)[0]),

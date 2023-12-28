@@ -3,8 +3,9 @@
 	import { toasts } from './stores';
 	import { AlertTriangle, Check, ChevronRight } from 'lucide-svelte';
 	import type { Toast } from './types';
+	import { fade } from 'svelte/transition';
 
-	const successClasses = 'z-1000 bg-green-200 border-green-400 dark:bg-slate-900 dark:border-green-600';
+	const successClasses = 'bg-green-200 border-green-400 dark:bg-slate-900 dark:border-green-600';
 	const errorClasses = 'bg-red-200 border-red-400 dark:bg-slate-900 dark:border-red-600';
 	const neutralClasses = 'bg-white border-gray-300 dark:bg-slate-900 dark:border-gray-600';
 
@@ -31,16 +32,18 @@
 
 <div class="fixed top-0 right-0 m-4 space-y-2 w-1/2 md:w-1/3 lg:w-1/4">
 	{#each $toasts as toast}
-		<Alert.Root class={getToastClasses(toast)}>
-			{#if toast.type === 'success'}
-				<Check class="h-4 w-4" />
-			{:else if toast.type === 'error'}
-				<AlertTriangle class="h-4 w-4" />
-			{:else}
-				<ChevronRight class="h-4 w-4" />
-			{/if}
-			<Alert.Title>{getToastTitle(toast)}</Alert.Title>
-			<Alert.Description>{toast.message}</Alert.Description>
-		</Alert.Root>
+		<div transition:fade>
+			<Alert.Root class={getToastClasses(toast)}>
+				{#if toast.type === 'success'}
+					<Check class="h-4 w-4" />
+				{:else if toast.type === 'error'}
+					<AlertTriangle class="h-4 w-4" />
+				{:else}
+					<ChevronRight class="h-4 w-4" />
+				{/if}
+				<Alert.Title>{getToastTitle(toast)}</Alert.Title>
+				<Alert.Description>{toast.message}</Alert.Description>
+			</Alert.Root>
+		</div>
 	{/each}
 </div>
