@@ -22,6 +22,7 @@
 	diceConfig.set(data.config);
 	availableEffects.set(data.effects);
 	availableDiceSkins.set(data.diceSkins);
+    currentSides.set(data.dice);
 
 	let isSubmitting = false;
 
@@ -63,6 +64,8 @@
 			availableEffects.set(newData.effects);
 			availableDiceSkins.set(newData.diceSkins);
 
+            document.cookie = `defaultdice=${e.value}; path=/`;
+            console.log(document.cookie);
 			await goto('/dashboard');
 		} catch (e) {
 			console.error(e);

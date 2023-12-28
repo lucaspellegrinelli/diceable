@@ -7,15 +7,17 @@ export const load = async (event: any) => {
         throw redirect(303, '/auth');
     }
 
-    const user = session?.user?.image?.split('avatars/')[1]?.split('/')[0] || '';
+    const dice = event.cookies.get("defaultdice") || 'd10';
 
-    const { effects, diceSkins, config } = await updateCurrentConfig(user, 'd10', event.fetch);
+    const user = session?.user?.image?.split('avatars/')[1]?.split('/')[0] || '';
+    const { effects, diceSkins, config } = await updateCurrentConfig(user, dice, event.fetch);
 
     return {
         session,
         user,
         effects,
         diceSkins,
-        config
+        config,
+        dice
     };
 };
