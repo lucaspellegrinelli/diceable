@@ -29,6 +29,16 @@
 		(palette) => palette.value === playerSkin.palette
 	);
 
+	$: {
+		if (selectedEffect) {
+			playerSkin.effect = selectedEffect.value;
+		}
+
+		if (selectedPalette) {
+			playerSkin.palette = selectedPalette.value;
+		}
+	}
+
 	const dispatch = createEventDispatcher();
 </script>
 

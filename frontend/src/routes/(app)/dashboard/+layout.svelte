@@ -15,6 +15,7 @@
 	import { saveConfig, updateCurrentConfig } from '$lib/config';
 	import { goto } from '$app/navigation';
 	import { addToast } from '$lib/toasts';
+	import type { LocalDiceConfig } from '$lib/types';
 
 	export let data: PageData;
 
@@ -71,9 +72,35 @@
 		}
 	};
 
+	const getFormProblems = (config: LocalDiceConfig) => {
+		const emptyDiscordId = config.playerSkins.some((playerSkin) => playerSkin.discordId === '');
+		if (emptyDiscordId) return 'Discord ID of player skin cannot be empty';
+
+		const emptyPaletteName = config.palettes.some((palette) => palette.name === '');
+		if (emptyPaletteName) return 'Palette name cannot be empty';
+
+		const playerWithInvalidPalette = config.playerSkins.find((playerSkin) =>
+			config.palettes.every((palette) => palette.name !== playerSkin.palette)
+		);
+
+		if (playerWithInvalidPalette) {
+			const identifier = playerWithInvalidPalette.description || playerWithInvalidPalette.discordId;
+			return `Player "${identifier}" has an invalid palette ("${playerWithInvalidPalette.palette}")`;
+		}
+
+		const isThereDefaultPalette = config.palettes.some((palette) => palette.default);
+		if (!isThereDefaultPalette) return 'There must be a default palette';
+	};
+
 	const saveChanges = async () => {
 		const userDiceConfig = get(diceConfig);
 		const diceSides = get(currentSides);
+
+		const formProblem = getFormProblems(userDiceConfig);
+		if (formProblem) {
+			addToast(formProblem, 'error');
+			return;
+		}
 
 		isSubmitting = true;
 
