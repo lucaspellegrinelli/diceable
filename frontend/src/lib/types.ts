@@ -11,12 +11,6 @@ export type PlayerSkin = {
     effect?: string;
 };
 
-export type Palette = {
-    name: string;
-    skin: string[];
-    default: boolean;
-};
-
 export type DiceConfig = {
     custom_colors: string;
     palettes: { [key: string]: string[] };
@@ -26,4 +20,21 @@ export type DiceConfig = {
 
 export type UserConfig = {
     [key: string]: DiceConfig;
+};
+
+// Client types
+export type LocalPalette = {
+    name: string;
+    skin: string[];
+    default: boolean;
+};
+
+export type LocalDiceConfig = {
+    customColors: boolean;
+    palettes: LocalPalette[];
+    playerSkins: PlayerSkin[];
+};
+
+export type LocalUserConfig = {
+    [key: string]: LocalDiceConfig;
 };

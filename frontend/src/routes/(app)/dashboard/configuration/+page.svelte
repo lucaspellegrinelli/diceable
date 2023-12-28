@@ -2,13 +2,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { Label } from '$lib/components/ui/label';
 	import { Switch } from '$lib/components/ui/switch';
-	import type { PageData } from './$types';
-
-	export let data: PageData;
-
-	let customColors = false;
-
-	$: data.config.custom_colors = customColors ? 'true' : 'false';
+	import { diceConfig } from '$lib/stores';
 </script>
 
 <div class="space-y-6 lg:max-w-2xl">
@@ -25,6 +19,10 @@
 				Enable this to use the custom color palettes chosen below for the players.
 			</span>
 		</Label>
-		<Switch id="custom_colors" aria-label="Custom Colors" bind:checked={customColors} />
+		<Switch
+			id="custom_colors"
+			aria-label="Custom Colors"
+			bind:checked={$diceConfig.customColors}
+		/>
 	</div>
 </div>

@@ -2,23 +2,27 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { Card } from '$lib/components/ui/card';
 	import { Plus } from 'lucide-svelte';
-	import type { PageData } from './$types';
 	import PlayerSkinEditor from './player-skin-editor.svelte';
+	import { availableEffects, diceConfig } from '$lib/stores';
+	import { get } from 'svelte/store';
 
-	export let data: PageData;
+	let currentDiceConfig = get(diceConfig);
+	diceConfig.subscribe((value) => {
+		currentDiceConfig = value;
+	});
 
 	const addNewPlayerSkin = () => {
 		const newPlayerSkin = {
 			discordId: '',
 			description: '',
-			palette: data.palettes[0].name,
+			palette: currentDiceConfig!.palettes[0].name,
 			effect: 'None'
 		};
-		data.playerSkins = [...data.playerSkins, newPlayerSkin];
+		currentDiceConfig!.playerSkins = [...currentDiceConfig!.playerSkins, newPlayerSkin];
 	};
 
 	const deletePlayerSkin = (index: number) => {
-		data.playerSkins = data.playerSkins.filter((_, i) => i !== index);
+		currentDiceConfig!.playerSkins = currentDiceConfig!.playerSkins.filter((_, i) => i !== index);
 	};
 </script>
 
@@ -32,11 +36,11 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
-		{#each data.playerSkins as playerSkin, playerSkinIndex}
+		{#each $diceConfig.playerSkins as playerSkin, playerSkinIndex}
 			<PlayerSkinEditor
 				{playerSkin}
-				palettes={data.palettes}
-				effectOptions={data.effects}
+				palettes={$diceConfig.palettes}
+				effectOptions={$availableEffects}
 				on:delete={() => deletePlayerSkin(playerSkinIndex)}
 			/>
 		{/each}

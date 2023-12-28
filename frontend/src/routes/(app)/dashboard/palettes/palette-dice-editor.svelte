@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { Palette } from '$lib/types';
+	import type { LocalPalette } from '$lib/types';
 
 	export let dice: string[];
-	export let palette: Palette;
+	export let palette: LocalPalette;
 	const diceSides = palette.skin.length;
 
 	const chooseSkin = (skinIndex: number, skinName: string): any => {

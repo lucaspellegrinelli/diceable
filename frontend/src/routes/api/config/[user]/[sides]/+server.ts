@@ -11,20 +11,20 @@ export async function GET({ params }) {
     const userUUID = params.user;
     const diceSides = params.sides;
 
-    let userConfig = await redisClient.hGet('user-configs', userUUID);
+    let userConfig: string = await redisClient.hGet('user-configs', userUUID);
 
     if (!userConfig) {
         await redisClient.hSet('user-configs', userUUID, getDefaultConfig(userUUID));
         userConfig = await redisClient.hGet('user-configs', userUUID);
     }
 
-    const userConfigJson = JSON.parse(userConfig);
+    const userConfigJson: UserConfig = JSON.parse(userConfig);
 
     if (!(diceSides in userConfigJson)) {
         return new Response(`Dice sides ${diceSides} not found`);
     }
 
-    const diceUserConfig = userConfigJson[diceSides];
+    const diceUserConfig: DiceConfig = userConfigJson[diceSides];
     return new Response(JSON.stringify(diceUserConfig));
 }
 

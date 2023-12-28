@@ -7,10 +7,10 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	import type { Palette, PlayerSkin } from '$lib/types';
+	import type { LocalPalette, PlayerSkin } from '$lib/types';
 	import { Label } from '$lib/components/ui/label';
 
-	export let palettes: Palette[];
+	export let palettes: LocalPalette[];
 	export let playerSkin: PlayerSkin;
 	export let effectOptions: string[];
 

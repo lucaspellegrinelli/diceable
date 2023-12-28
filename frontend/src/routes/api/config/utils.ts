@@ -1,6 +1,6 @@
-import type { Config } from "$lib/types";
+import type { DiceConfig } from "$lib/types";
 
-export const getDefaultDiceConfig = (sides: number, userUUID: string): Config => ({
+export const getDefaultDiceConfig = (sides: number, userUUID: string): DiceConfig => ({
     custom_colors: "false",
     palettes: {
         "Default": ["red", ...Array(sides - 2).fill("indigo"), "green"]

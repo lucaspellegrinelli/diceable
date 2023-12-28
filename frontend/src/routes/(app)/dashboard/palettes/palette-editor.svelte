@@ -2,14 +2,14 @@
 	import { Card } from '$lib/components/ui/card';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as Accordion from '$lib/components/ui/accordion';
-	import type { Palette } from '$lib/types';
+	import type { LocalPalette } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Flame, Trash2 } from 'lucide-svelte';
 	import PaletteDiceEditor from './palette-dice-editor.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let palette: Palette;
+	export let palette: LocalPalette;
 	export let dice: string[];
 
 	const dispatch = createEventDispatcher();

@@ -16,7 +16,7 @@
 			Discord bot to roll dice in Discord and OBS simultaneously.
 		</p>
 		{#if $page.data.session}
-			<Button href="/dashboard/d10">
+			<Button href="/dashboard">
 				Go to dashboard
 				<Wrench size={16} class="ml-2" />
 			</Button>

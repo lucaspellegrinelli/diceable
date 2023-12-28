@@ -1,30 +1,40 @@
 <script lang="ts">
 	import { Separator } from '$lib/components/ui/separator';
-    import { Card } from '$lib/components/ui/card';
+	import { Card } from '$lib/components/ui/card';
 	import { Plus } from 'lucide-svelte';
-	import type { PageData } from './$types';
 	import PaletteEditor from './palette-editor.svelte';
+	import { get } from 'svelte/store';
+	import { availableDiceSkins, currentSides, diceConfig } from '$lib/stores';
 
-	export let data: PageData;
-	const diceSides = data.palettes[0].skin.length;
+	let diceSideCount = parseInt(get(currentSides).slice(1));
+	currentSides.subscribe((value) => {
+		diceSideCount = parseInt(value.slice(1));
+	});
+
+	let currentDiceConfig = get(diceConfig);
+	diceConfig.subscribe((value) => {
+		currentDiceConfig = value;
+	});
 
 	const createNewPalette = (name: string) => ({
 		name: name,
-		skin: Array(diceSides).fill(data.dice[0]),
-		default: data.palettes.length === 0
+		skin: Array(diceSideCount).fill(get(availableDiceSkins)[0]),
+		default: currentDiceConfig!.palettes.length === 0
 	});
 
 	const addNewPalette = () => {
 		const id = Math.random().toString(36).substring(7);
-		data.palettes = [...data.palettes, createNewPalette(id)];
+		currentDiceConfig!.palettes = [...currentDiceConfig!.palettes, createNewPalette(id)];
 	};
 
 	const removePalette = (paletteIndex: number) => {
-		data.palettes = data.palettes.filter((_, index) => index !== paletteIndex);
+		currentDiceConfig!.palettes = currentDiceConfig!.palettes.filter(
+			(_, index) => index !== paletteIndex
+		);
 	};
 
 	const setDefaultPalette = (paletteIndex: number) => {
-		data.palettes = data.palettes.map((palette, index) => {
+		currentDiceConfig!.palettes = currentDiceConfig!.palettes.map((palette, index) => {
 			palette.default = index === paletteIndex;
 			return palette;
 		});
@@ -39,10 +49,10 @@
 	<Separator />
 
 	<div class="grid w-full grid-cols-1 lg:grid-cols-2 gap-2 mb-6">
-		{#each data.palettes as palette, paletteIndex}
+		{#each $diceConfig?.palettes as palette, paletteIndex}
 			<PaletteEditor
 				{palette}
-                dice={data.dice}
+				dice={$availableDiceSkins}
 				on:delete={() => removePalette(paletteIndex)}
 				on:setdefault={() => setDefaultPalette(paletteIndex)}
 			/>
