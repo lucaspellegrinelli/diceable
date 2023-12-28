@@ -41,7 +41,7 @@
 						>
 							<img
 								src={skinUrl(diceSkinName, (skinIndex + 1) % palette.skin.length)}
-								class="w-24 mr-2"
+								class="w-20 md:w-14 mr-2"
 								alt="{skinName} dice"
 								loading="lazy"
 							/>

@@ -7,8 +7,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	let obsTutorialModal = false;
 
+	let obsTutorialModal = false;
 	let obsLink = '';
 
 	const openObsTutorialModal = () => {
@@ -22,7 +22,7 @@
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-	<Card class="flex flex-col items-center p-4 text-center">
+	<Card class="flex flex-col items-center justify-between p-4 text-center">
 		<Icon icon="mdi:discord" class="text-4xl" />
 		<h3 class="mb-2 text-2xl font-bold">Discord bot invite link</h3>
 		<p>Invite our bot to your Discord server to enhance your gaming experience.</p>
@@ -32,7 +32,7 @@
 			class="w-full mt-2">Add bot to your server</Button
 		>
 	</Card>
-	<Card class="flex flex-col items-center p-4 text-center">
+	<Card class="flex flex-col items-center justify-between p-4 text-center">
 		<Icon icon="simple-icons:obsstudio" class="text-4xl" />
 		<h3 class="mb-2 text-2xl font-bold">OBS overlay page</h3>
 		<p>Display your dice rolls on stream with our OBS overlay page.</p>
@@ -71,7 +71,7 @@
 					</li>
 				</ul>
 
-                <Button on:click={() => obsTutorialModal = false} class="w-full mt-2">Close</Button>
+				<Button on:click={() => (obsTutorialModal = false)} class="w-full mt-2">Close</Button>
 			</Dialog.Description>
 		</Dialog.Content>
 	</Dialog.Portal>
