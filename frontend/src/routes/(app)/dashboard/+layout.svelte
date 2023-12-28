@@ -65,7 +65,6 @@
 			availableDiceSkins.set(newData.diceSkins);
 
             document.cookie = `defaultdice=${e.value}; path=/`;
-            console.log(document.cookie);
 			await goto('/dashboard');
 		} catch (e) {
 			console.error(e);
