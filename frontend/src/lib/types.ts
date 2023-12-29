@@ -1,8 +1,6 @@
-import type { Session } from '@auth/core/types';
-
 export type Toast = {
     message: string;
-    type: "success" | "error";
+    type: "success" | "error" | "info";
     createdAt: number;
 };
 
@@ -13,39 +11,30 @@ export type PlayerSkin = {
     effect?: string;
 };
 
-export type Config = {
+export type DiceConfig = {
     custom_colors: string;
     palettes: { [key: string]: string[] };
-    default_palette: string;
     player_skins: { [key: string]: PlayerSkin };
+    default_palette: string;
 };
 
-export type PageServerLoadData = {
-    user: string;
-    config: Config;
-    effects: string[];
-    dice: string[];
-    session: Session | null;
+export type UserConfig = {
+    [key: string]: DiceConfig;
 };
 
-type CloudflareImageInfo = {
-    filename: string;
-    id: string;
+// Client types
+export type LocalPalette = {
+    name: string;
+    skin: string[];
+    default: boolean;
 };
 
-export type CloudflareImageResponse = {
-    result: {
-        images: CloudflareImageInfo[];
-    };
+export type LocalDiceConfig = {
+    customColors: boolean;
+    palettes: LocalPalette[];
+    playerSkins: PlayerSkin[];
 };
 
-type CloudflareVideoInfo = {
-    meta: {
-        filename: string;
-    };
-    uid: string;
-};
-
-export type CloudflareVideoResponse = {
-    result: CloudflareVideoInfo[];
+export type LocalUserConfig = {
+    [key: string]: LocalDiceConfig;
 };

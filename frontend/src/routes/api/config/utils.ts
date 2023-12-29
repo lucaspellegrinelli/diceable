@@ -1,12 +1,19 @@
-export const getDefaultDiceConfig = (sides: number, userUUID: string) => ({
-    "custom_colors": "false",
-    "palettes": {
+import type { DiceConfig } from "$lib/types";
+
+export const getDefaultDiceConfig = (sides: number, userUUID: string): DiceConfig => ({
+    custom_colors: "false",
+    palettes: {
         "Default": ["red", ...Array(sides - 2).fill("indigo"), "green"]
     },
-    "player_skins": {
-        [userUUID]: { "palette": "Default", "description": "You" }
+    player_skins: {
+        [userUUID]: {
+            discordId: userUUID,
+            description: "You",
+            palette: "Default",
+            effect: "None"
+        }
     },
-    "default_palette": "Default"
+    default_palette: "Default"
 });
 
 export const getDefaultConfig = (userUUID: string) => (JSON.stringify({

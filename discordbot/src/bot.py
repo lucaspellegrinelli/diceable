@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import signal
 import sys
@@ -15,7 +14,7 @@ load_dotenv()
 config = setup_config()
 
 
-@ config.client.event
+@config.client.event
 async def on_ready():
     setup_roll_commands(config)
     setup_management_commands(config)
@@ -24,12 +23,12 @@ async def on_ready():
     config.logger.log(logging.INFO, f"Logged in as {config.client.user}")
 
 
-@ config.sio.event
+@config.sio.event
 def connect():
     config.logger.log(logging.INFO, "Connected to socket.io")
 
 
-@ config.sio.event
+@config.sio.event
 def disconnect():
     config.logger.log(logging.INFO, "Disconnected from socket.io")
 

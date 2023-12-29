@@ -1,11 +1,6 @@
 import { redisClient } from '$lib/redisConnection';
+import type { DiceConfig, UserConfig } from '$lib/types';
 import { getDefaultDiceConfig, getDefaultConfig } from '../../utils';
-
-type UserDiceConfig = {
-    custom_colors: string,
-    palettes: { [key: string]: string[] },
-    player_skins: { [key: string]: { palette: string, effect: string } }
-};
 
 const diceSideCount: { [key: string]: number } = {
     "d10": 10,
@@ -15,46 +10,51 @@ const diceSideCount: { [key: string]: number } = {
 export async function GET({ params }) {
     const userUUID = params.user;
     const diceSides = params.sides;
-    let userConfig = await redisClient.hGet('user-configs', userUUID);
+
+    let userConfig: string = await redisClient.hGet('user-configs', userUUID);
 
     if (!userConfig) {
         await redisClient.hSet('user-configs', userUUID, getDefaultConfig(userUUID));
         userConfig = await redisClient.hGet('user-configs', userUUID);
     }
 
-    const userConfigJson = JSON.parse(userConfig);
+    const userConfigJson: UserConfig = JSON.parse(userConfig);
 
     if (!(diceSides in userConfigJson)) {
         return new Response(`Dice sides ${diceSides} not found`);
     }
 
-    const diceUserConfig = userConfigJson[diceSides];
+    const diceUserConfig: DiceConfig = userConfigJson[diceSides];
     return new Response(JSON.stringify(diceUserConfig));
 }
 
 export async function POST({ params, request }) {
     const userUUID = params.user;
     const diceSides = params.sides;
-    const config: UserDiceConfig = await request.json();
+    const config: DiceConfig = await request.json();
 
     const userExists = await redisClient.hExists('user-configs', userUUID);
-    let userFullConfigStr = undefined;
+    let userFullConfigStr: string | undefined = undefined;
     if (userExists) {
         userFullConfigStr = await redisClient.hGet('user-configs', userUUID);
     }
 
-    let userFullConfig = undefined;
+    let userFullConfig: UserConfig | undefined = undefined;
     if (userFullConfigStr) {
         userFullConfig = JSON.parse(userFullConfigStr);
     }
 
-    let diceUserConfig = undefined;
+    if (!userFullConfig) {
+        userFullConfig = {};
+    }
+
+    let diceUserConfig: DiceConfig | undefined = undefined;
     if (userFullConfig && diceSides in userFullConfig) {
         diceUserConfig = userFullConfig[diceSides];
     }
 
     const defaultConfig = getDefaultDiceConfig(diceSideCount[diceSides], userUUID);
-    const currentConfig: UserDiceConfig = diceUserConfig || defaultConfig;
+    const currentConfig: DiceConfig = diceUserConfig || defaultConfig;
 
     // Remove any palettes that don't exist
     const palettes = Object.keys(config.palettes);
