@@ -65,7 +65,10 @@
 				class="flex w-full h-full cursor-pointer items-center justify-center min-h-32"
 				on:click={addNewPalette}
 			>
-				<Plus size={28} />
+				<div class="flex flex-col items-center justify-center">
+					<Plus size={28} />
+					<p>Add new palette</p>
+				</div>
 			</button>
 		</Card>
 	</div>

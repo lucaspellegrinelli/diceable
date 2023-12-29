@@ -52,7 +52,10 @@
 				class="flex w-full h-full cursor-pointer items-center justify-center min-h-56"
 				on:click={addNewPlayerSkin}
 			>
-				<Plus size={28} />
+				<div class="flex flex-col items-center justify-center">
+					<Plus size={28} />
+					<p>Add new player skin</p>
+				</div>
 			</button>
 		</Card>
 	</div>
