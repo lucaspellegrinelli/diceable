@@ -117,7 +117,7 @@
 </script>
 
 <button
-	class="fixed bottom-0 right-0 mb-5 mr-5 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-black cursor-pointer p-5 hover:p-6 transition-all duration-200"
+	class="fixed bottom-0 right-0 mb-5 mr-5 rounded-full bg-primary text-white dark:text-black cursor-pointer p-5 hover:p-6 transition-all duration-200"
 	on:click={saveChanges}
 >
 	{#if isSubmitting}

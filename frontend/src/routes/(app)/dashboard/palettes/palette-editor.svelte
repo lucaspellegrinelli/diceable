@@ -30,7 +30,8 @@
 				<Tooltip.Trigger asChild let:builder>
 					<Button
 						builders={[builder]}
-						class="w-full {palette.default ? 'bg-violet-500 hover:bg-violet-600' : ''}"
+						class="w-full"
+                        variant="{palette.default ? 'default' : 'outline'}"
 						on:click={() => dispatch('setdefault')}
 					>
 						<Flame size={16} />
