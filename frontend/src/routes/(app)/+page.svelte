@@ -41,7 +41,7 @@
 			<Dialog.Description>
 				Are you sure you want to sign out?
 				<div class="flex justify-start mt-4">
-					<Button variant="destructive" class="mr-2" on:click={() => signOut()}
+					<Button variant="outline" class="mr-2" on:click={() => signOut()}
 						>Yes, I want to sign out</Button
 					>
 					<Button on:click={() => (signOutModal = false)}>No, keep me signed in</Button>
