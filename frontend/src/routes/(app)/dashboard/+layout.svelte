@@ -14,7 +14,7 @@
 	import { get } from 'svelte/store';
 	import { saveConfig, updateCurrentConfig } from '$lib/config';
 	import { goto } from '$app/navigation';
-    import { toast } from 'svelte-sonner';
+	import { toast } from 'svelte-sonner';
 	import type { LocalDiceConfig } from '$lib/types';
 
 	export let data: PageData;
@@ -66,7 +66,7 @@
 			await goto('/dashboard');
 		} catch (e) {
 			console.error(e);
-            toast.error('An error occurred while changing the dice sides.');
+			toast.error('An error occurred while changing the dice sides.');
 		} finally {
 			loadingBlocker.set(false);
 		}
@@ -98,7 +98,7 @@
 
 		const formProblem = getFormProblems(userDiceConfig);
 		if (formProblem) {
-            toast.error(formProblem);
+			toast.error(formProblem);
 			return;
 		}
 
@@ -106,10 +106,10 @@
 
 		try {
 			await saveConfig(data.user, diceSides, userDiceConfig);
-            toast.success('Configuration saved successfully.');
+			toast.success('Configuration saved successfully.');
 		} catch (e) {
 			console.error(e);
-            toast.error('An error occurred while saving the configuration.');
+			toast.error('An error occurred while saving the configuration.');
 		} finally {
 			isSubmitting = false;
 		}
