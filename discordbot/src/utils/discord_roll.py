@@ -1,11 +1,10 @@
 import asyncio
-from collections.abc import Awaitable as ABCAwaitable
 import logging
 import random
+from collections.abc import Awaitable as ABCAwaitable
 from typing import Literal
 
 import discord
-
 from models.server import DiscordServerConfig
 
 from .config import BotConfig
@@ -44,9 +43,7 @@ async def _get_owner_id(config: BotConfig, server_id: str):
 
 
 async def _get_server_config(config: BotConfig, owner_id: str):
-    if owner_id is None or not config.redis_client.hexists(
-        "user-configs", owner_id
-    ):
+    if owner_id is None or not config.redis_client.hexists("user-configs", owner_id):
         return None
 
     server_config = config.redis_client.hget("user-configs", owner_id)
@@ -73,9 +70,7 @@ async def roll(
 
     owner_id = await _get_owner_id(config, server_id)
 
-    if owner_id is None or not config.redis_client.hexists(
-        "user-configs", owner_id
-    ):
+    if owner_id is None or not config.redis_client.hexists("user-configs", owner_id):
         return await interaction.response.send_message(
             "```yaml\nServer not configured: No owner found```",
         )
@@ -108,7 +103,7 @@ async def roll(
     }
 
     config.sio.emit("roll", pub_content)
-    config.logger.log(logging.INFO, f"Rolling dice: {pub_content}")
+    config.logger.info(logging.INFO, f"Rolling dice: {pub_content}")
 
     await interaction.response.send_message(
         "```yaml\nRolling dice...```",
@@ -118,10 +113,9 @@ async def roll(
     await channel.send(
         content="",
         file=discord.File(
-            create_roll_gif(sides, rolled_dice, palette),
-            filename="roll.gif"
+            create_roll_gif(sides, rolled_dice, palette), filename="roll.gif"
         ),
-        delete_after=20
+        delete_after=20,
     )
 
     orig_response = await interaction.original_response()

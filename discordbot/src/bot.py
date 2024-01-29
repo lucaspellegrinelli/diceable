@@ -3,12 +3,10 @@ import signal
 import sys
 import time
 
-from dotenv import load_dotenv
-
 from commands.management import setup_management_commands
 from commands.roll import setup_roll_commands
+from dotenv import load_dotenv
 from utils.config import setup_config
-
 
 load_dotenv()
 config = setup_config()

@@ -1,6 +1,6 @@
 from collections.abc import Awaitable as ABCAwaitable
-from models.server import DiscordServerConfig
 
+from models.server import DiscordServerConfig
 from utils.config import BotConfig
 
 
@@ -19,9 +19,7 @@ def setup_management_commands(config: BotConfig):
 
         if not config.redis_client.hexists("user-configs", user_id):
             config.redis_client.hset(
-                "user-configs",
-                user_id,
-                DiscordServerConfig.default().to_json()
+                "user-configs", user_id, DiscordServerConfig.default().to_json()
             )
 
         return await interaction.response.send_message(
@@ -54,9 +52,7 @@ def setup_management_commands(config: BotConfig):
             )
 
         config.redis_client.hdel("user-servers", [server_id])
-        await interaction.response.send_message(
-            "```yaml\nServer unregistered```"
-        )
+        await interaction.response.send_message("```yaml\nServer unregistered```")
 
     if not config.tree.get_command("register"):
         config.tree.add_command(register_command)
