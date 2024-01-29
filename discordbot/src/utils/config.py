@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import logging
 import os
+from dataclasses import dataclass
 
 import discord
 import redis
@@ -35,10 +35,8 @@ def setup_config():
         REDISHOST=os.getenv("REDISHOST") or raise_error("REDISHOST"),
         REDISPORT=int(os.getenv("REDISPORT") or raise_error("REDISPORT")),
         REDISUSER=os.getenv("REDISUSER") or raise_error("REDISUSER"),
-        REDISPASSWORD=os.getenv(
-            "REDISPASSWORD") or raise_error("REDISPASSWORD"),
-        DISCORD_TOKEN=os.getenv(
-            "DISCORD_TOKEN") or raise_error("DISCORD_TOKEN"),
+        REDISPASSWORD=os.getenv("REDISPASSWORD") or raise_error("REDISPASSWORD"),
+        DISCORD_TOKEN=os.getenv("DISCORD_TOKEN") or raise_error("DISCORD_TOKEN"),
         SOCKETIO_URL=os.getenv("SOCKETIO_URL") or raise_error("SOCKETIO_URL"),
     )
 

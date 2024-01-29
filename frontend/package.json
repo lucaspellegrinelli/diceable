@@ -50,6 +50,7 @@
 		"lucide-svelte": "^0.302.0",
 		"mode-watcher": "^0.1.2",
 		"redis": "^4.6.12",
+		"svelte-sonner": "^0.3.11",
 		"tailwind-merge": "^2.2.0",
 		"tailwind-variants": "^0.1.19"
 	}

@@ -1,9 +1,3 @@
-export type Toast = {
-    message: string;
-    type: "success" | "error" | "info";
-    createdAt: number;
-};
-
 export type PlayerSkin = {
     discordId: string;
     description: string;
