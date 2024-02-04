@@ -102,6 +102,9 @@ async def roll(
         "effect": effect_name,
     }
 
+    # Remove None values
+    pub_content = {k: v for k, v in pub_content.items() if v is not None}
+
     config.sio.emit("roll", pub_content)
     config.logger.log(logging.INFO, f"Rolling dice: {pub_content}")
 
