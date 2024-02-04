@@ -103,7 +103,7 @@ async def roll(
     }
 
     config.sio.emit("roll", pub_content)
-    config.logger.info(logging.INFO, f"Rolling dice: {pub_content}")
+    config.logger.log(logging.INFO, f"Rolling dice: {pub_content}")
 
     await interaction.response.send_message(
         "```yaml\nRolling dice...```",
