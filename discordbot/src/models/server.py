@@ -50,7 +50,11 @@ class DiceConfig:
 
     def get_player_effect(self, user_id: str) -> str | None:
         player_skin = self.player_skins.get(user_id, None)
-        if player_skin is None or player_skin.effect is None:
+        if (
+            player_skin is None
+            or player_skin.effect is None
+            or player_skin.effect == "None"
+        ):
             return None
 
         return player_skin.effect
