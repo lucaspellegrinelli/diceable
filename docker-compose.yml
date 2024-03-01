@@ -40,6 +40,7 @@ services:
       - REDISUSER=default
     volumes:
       - ./discordbot:/app
+      - ./discordbot/data:/app/data
 
   frontend:
     build:

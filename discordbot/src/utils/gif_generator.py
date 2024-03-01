@@ -1,29 +1,25 @@
-from io import BytesIO
 import os
 import random
-from typing import Literal
 import uuid
+from io import BytesIO
+from typing import Literal
 
-from PIL import Image
 import requests
+from PIL import Image
 
 from .common import DICE_H, DICE_W, OUTPUT_H, OUTPUT_W, get_dice_positions
 
-dice_cache = {}
+DICE_CACHE_LOCATION = "/app/data/dice_cache"
 
 
 def _dice_url(sides: str, skin: str, number: int):
     return f"https://assets.togarashi.app/dice/{sides}/{skin}/{number}.png"
 
 
-def _load_dice_image(
-    sides: Literal["d10"] | Literal["d20"],
-    number: int,
-    skin: str
-):
-    if number in dice_cache.get(sides, {}):
-        if skin in dice_cache[sides].get(number, {}):
-            return dice_cache[sides][number][skin]
+def _load_dice_image(sides: Literal["d10"] | Literal["d20"], number: int, skin: str):
+    target_path = os.path.join(DICE_CACHE_LOCATION, f"{sides}-{number}-{skin}.png")
+    if os.path.exists(target_path):
+        return Image.open(target_path)
 
     cdn_url = _dice_url(sides, skin, number)
     response = requests.get(cdn_url)
@@ -32,17 +28,12 @@ def _load_dice_image(
     img = img.convert("RGBA")
     img = img.resize((DICE_W, DICE_H))
 
-    dice_cache.setdefault(sides, {})
-    dice_cache[sides].setdefault(number, {})
-    dice_cache[sides][number][skin] = img
-
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    img.save(target_path)
     return img
 
 
-def _load_dice_palette(
-    sides: Literal["d10"] | Literal["d20"],
-    palette: list[str]
-):
+def _load_dice_palette(sides: Literal["d10"] | Literal["d20"], palette: list[str]):
     dice_images = []
     for i, skin in enumerate([palette[-1]] + palette[:-1]):
         dice_img = _load_dice_image(sides, i, skin)
