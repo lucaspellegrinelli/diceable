@@ -10,6 +10,8 @@ from models.server import DiscordServerConfig
 from .config import BotConfig
 from .gif_generator import create_roll_gif
 
+GIF_SAVE_PATH = "/app/data/roll_gifs"
+
 
 def _roll_dice(
     amount: int,
@@ -113,7 +115,13 @@ async def roll(
     await channel.send(
         content="",
         file=discord.File(
-            create_roll_gif(sides, rolled_dice, palette), filename="roll.gif"
+            create_roll_gif(
+                sides,
+                rolled_dice,
+                palette,
+                save_path=GIF_SAVE_PATH,
+            ),
+            filename="roll.gif",
         ),
         delete_after=20,
     )
