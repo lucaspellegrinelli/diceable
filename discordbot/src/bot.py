@@ -41,14 +41,9 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    while True:
-        try:
-            config.sio.connect(config.env.SOCKETIO_URL)
-            break
-        except Exception:
-            config.logger.log(
-                logging.INFO, "Socket.io connection error. Retrying in 5s..."
-            )
-            time.sleep(5)
+    try:
+        config.sio.connect(config.env.SOCKETIO_URL)
+    except Exception:
+        config.logger.log(logging.INFO, "Socket.io connection error. Retrying in 5s...")
 
     config.client.run(config.env.DISCORD_TOKEN)
