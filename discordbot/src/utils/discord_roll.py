@@ -112,7 +112,7 @@ async def roll(
             )
 
     config.sio.emit("roll", pub_content)
-    config.logger.log(logging.INFO, f"Rolling dice: {pub_content}")
+    config.logger.info(f"Rolling dice: {pub_content}")
 
     await interaction.response.send_message(
         "```yaml\nRolling dice...```",
@@ -145,8 +145,6 @@ def _reconnect_socket(config: BotConfig):
         config.sio.connect(config.env.SOCKETIO_URL)
         return True
     except Exception:
-        config.logger.log(
-            logging.INFO, "Socket.io connection error. Couldn't reconnect..."
-        )
+        config.logger.error("Socket.io connection error. Couldn't reconnect...")
 
     return False
