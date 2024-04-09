@@ -104,6 +104,13 @@ async def roll(
         "effect": effect_name,
     }
 
+    if not config.sio.connected:
+        success = _reconnect_socket(config)
+        if not success:
+            return await interaction.response.send_message(
+                "```yaml\nInternal connection error. Please try again later.```",
+            )
+
     config.sio.emit("roll", pub_content)
     config.logger.log(logging.INFO, f"Rolling dice: {pub_content}")
 
@@ -131,3 +138,15 @@ async def roll(
 
     roll_str = _generate_roll_message(rolled_dice, modifier)
     await orig_response.edit(content=f"```yaml\n{roll_str}```")
+
+
+def _reconnect_socket(config: BotConfig):
+    try:
+        config.sio.connect(config.env.SOCKETIO_URL)
+        return True
+    except Exception:
+        config.logger.log(
+            logging.INFO, "Socket.io connection error. Couldn't reconnect..."
+        )
+
+    return False
