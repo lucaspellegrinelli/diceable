@@ -41,9 +41,9 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    try:
-        config.sio.connect(config.env.SOCKETIO_URL)
-    except Exception as error:
-        config.logger.error(f"Failed to connect to socket.io: {error}")
+    # try:
+    #     config.sio.connect(config.env.SOCKETIO_URL)
+    # except Exception as error:
+    #     config.logger.error(f"Failed to connect to socket.io: {error}")
 
     config.client.run(config.env.DISCORD_TOKEN)
