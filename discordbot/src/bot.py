@@ -21,16 +21,6 @@ async def on_ready():
     config.logger.info(f"Logged in as {config.client.user}")
 
 
-@config.sio.event
-def connect():
-    config.logger.info("Connected to socket.io.")
-
-
-@config.sio.event
-def disconnect():
-    config.logger.info("Disconnected from socket.io.")
-
-
 def signal_handler(sig, _):
     config.logger.info(f"Received signal {sig}. Exiting...")
     sys.exit(0)
@@ -41,10 +31,4 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    try:
-        config.logger.info("Connecting to socket.io...")
-        config.sio.connect(config.env.SOCKETIO_URL)
-    except Exception as error:
-        config.logger.error(f"Failed to connect to socket.io: {error}")
-
     config.client.run(config.env.DISCORD_TOKEN)
