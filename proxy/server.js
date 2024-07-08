@@ -18,6 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/rolls/:id', (req, res) => {
+    console.log('Upgrade request:', req.headers)
     if (!req.headers.upgrade || req.headers.upgrade.toLowerCase() !== 'websocket') {
         res.status(400).send('Invalid request');
         return;
@@ -35,10 +36,12 @@ app.use('/rolls/:id', (req, res) => {
         });
 
         wsClient.on('message', (message) => {
+            console.log('Received message from Client:', message);
             wsSuburb.send(message);
         });
 
         wsSuburb.on('message', (message) => {
+            console.log('Received message from Suburb:', message);
             wsClient.send(message);
         });
 
@@ -63,6 +66,7 @@ app.use('/rolls/:id', (req, res) => {
 
     req.socket.on('data', (chunk) => {
         wsServer.handleUpgrade(req, req.socket, chunk, (wsClient) => {
+            console.log('Upgrade request');
             wsServer.emit('connection', wsClient, req);
         });
     });
