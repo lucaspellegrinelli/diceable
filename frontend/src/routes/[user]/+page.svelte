@@ -2,7 +2,6 @@
 	// @ts-nocheck
 	import { getDicePositions } from '$lib/dicePositionCalculator';
 	import { onMount } from 'svelte';
-	import { env } from '$env/dynamic/public';
 
 	export let data;
 	const userToken = data.user;
@@ -181,27 +180,30 @@
 			}
 		};
 
-		const channel = `roll-${userToken}`;
+		// const channel = `roll-${userToken}`;
 		// const suburbUrl = `/rolls/pubsub/${channel}/listen`;
 		const suburbUrl = `/rolls`;
-		const suburbSocket = new WebSocket(suburbUrl);
+		const socket = new WebSocket(suburbUrl);
 
-		suburbSocket.on('open', () => {
-			console.log(`Connected to suburb server on channel ${channel}`);
+		socket.addEventListener('open', function (event) {
+			console.log('WebSocket connection opened:', event);
+			// Send a message to the server
+			socket.send('Hello Server!');
 		});
 
-		suburbSocket.on('message', (message) => {
-			console.log(`Message from suburb server on channel ${channel}: ${message}`);
-			const parsedMessage = JSON.parse(message);
-			handleMessage(parsedMessage);
+		// Event listener for receiving messages from the server
+		socket.addEventListener('message', function (event) {
+			console.log('Message from server:', event.data);
 		});
 
-		suburbSocket.on('close', () => {
-			console.log(`Disconnected from suburb server on channel ${channel}`);
+		// Event listener for when the connection is closed
+		socket.addEventListener('close', function (event) {
+			console.log('WebSocket connection closed:', event);
 		});
 
-		suburbSocket.on('error', (error) => {
-			console.error(`Error on suburb server connection for channel ${channel}:`, error);
+		// Event listener for errors
+		socket.addEventListener('error', function (event) {
+			console.error('WebSocket error:', event);
 		});
 	});
 </script>

@@ -16,10 +16,9 @@ export default defineConfig({
 				target: `wss://${process.env.SUBURB_HOST}/pubsub/rolls/listen`,
 				ws: true,
 				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/rolls/, ''),
 				onProxyReqWs: (proxyReq, req, socket, options, head) => {
-					console.log('proxyReqWs');
 					proxyReq.setHeader('authorization', `${process.env.SUBURB_TOKEN}`);
-					console.log('suburb token', process.env.SUBURB_TOKEN);
 				}
 			}
 		}
