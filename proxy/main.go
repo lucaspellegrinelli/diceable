@@ -95,40 +95,54 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 
 func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 	done := make(chan struct{})
+	closeOnce := make(chan struct{})
 
 	go func() {
-		defer clientConn.Close()
-		defer targetConn.Close()
+		defer func() {
+			select {
+			case <-closeOnce:
+			default:
+				close(closeOnce)
+				close(done)
+			}
+		}()
 		for {
 			messageType, message, err := clientConn.ReadMessage()
 			if err != nil {
 				log.Printf("Error reading from client: %v", err)
-				break
+				return
 			}
 			if err := targetConn.WriteMessage(messageType, message); err != nil {
 				log.Printf("Error writing to target: %v", err)
-				break
+				return
 			}
 		}
-		close(done)
 	}()
 
 	go func() {
-		defer clientConn.Close()
-		defer targetConn.Close()
+		defer func() {
+			select {
+			case <-closeOnce:
+			default:
+				close(closeOnce)
+				close(done)
+			}
+		}()
 		for {
 			messageType, message, err := targetConn.ReadMessage()
 			if err != nil {
 				log.Printf("Error reading from target: %v", err)
-				break
+				return
 			}
 			if err := clientConn.WriteMessage(messageType, message); err != nil {
 				log.Printf("Error writing to client: %v", err)
-				break
+				return
 			}
 		}
-		close(done)
 	}()
 
 	<-done
+	log.Println("Closing connections")
+	clientConn.Close()
+	targetConn.Close()
 }
