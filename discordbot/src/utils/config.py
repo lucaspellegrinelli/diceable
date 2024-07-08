@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import discord
 import redis
-import socketio
+from utils.suburb import SuburbWebsocket, setup_logger
 
 
 @dataclass
@@ -14,7 +14,8 @@ class EnvVars:
     REDISUSER: str
     REDISPASSWORD: str
     DISCORD_TOKEN: str
-    SOCKETIO_URL: str
+    SUBURB_HOST: str
+    SUBURB_TOKEN: str
 
 
 @dataclass
@@ -24,7 +25,7 @@ class BotConfig:
     client: discord.Client
     tree: discord.app_commands.CommandTree
     redis_client: redis.Redis
-    sio: socketio.Client
+    pubsub: SuburbWebsocket
 
 
 def setup_config():
@@ -37,14 +38,15 @@ def setup_config():
         REDISUSER=os.getenv("REDISUSER") or raise_error("REDISUSER"),
         REDISPASSWORD=os.getenv("REDISPASSWORD") or raise_error("REDISPASSWORD"),
         DISCORD_TOKEN=os.getenv("DISCORD_TOKEN") or raise_error("DISCORD_TOKEN"),
-        SOCKETIO_URL=os.getenv("SOCKETIO_URL") or raise_error("SOCKETIO_URL"),
+        SUBURB_HOST=os.getenv("SUBURB_HOST") or raise_error("SUBURB_HOST"),
+        SUBURB_TOKEN=os.getenv("SUBURB_TOKEN") or raise_error("SUBURB_TOKEN"),
     )
 
     intents = discord.Intents.default()
     client = discord.Client(intents=intents)
     return BotConfig(
         env=env,
-        logger=logging.getLogger("discord"),
+        logger=setup_logger("diceable", "discord-py", env.SUBURB_HOST, env.SUBURB_TOKEN),
         client=client,
         tree=discord.app_commands.CommandTree(client),
         redis_client=redis.Redis(
@@ -53,5 +55,5 @@ def setup_config():
             username=env.REDISUSER,
             password=env.REDISPASSWORD,
         ),
-        sio=socketio.Client(),
+        pubsub=SuburbWebsocket(env.SUBURB_HOST, env.SUBURB_TOKEN),
     )

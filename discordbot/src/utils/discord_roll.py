@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import json
 import random
 from collections.abc import Awaitable as ABCAwaitable
 from typing import Literal
@@ -104,14 +104,7 @@ async def roll(
         "effect": effect_name,
     }
 
-    if not config.sio.connected:
-        success = _reconnect_socket(config)
-        if not success:
-            return await interaction.response.send_message(
-                "```yaml\nInternal connection error. Please try again later.```",
-            )
-
-    config.sio.emit("roll", pub_content)
+    config.pubsub.publish_message(f"roll-{owner_id}", json.dumps(pub_content))
     config.logger.info(f"Rolling dice: {pub_content}")
 
     await interaction.response.send_message(
@@ -138,13 +131,3 @@ async def roll(
 
     roll_str = _generate_roll_message(rolled_dice, modifier)
     await orig_response.edit(content=f"```yaml\n{roll_str}```")
-
-
-def _reconnect_socket(config: BotConfig):
-    try:
-        config.sio.connect(config.env.SOCKETIO_URL)
-        return True
-    except Exception:
-        config.logger.error("Socket.io connection error. Couldn't reconnect...")
-
-    return False
