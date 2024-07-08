@@ -37,6 +37,7 @@ io.on('connection', (socket) => {
     socket.on('join_channel', (data) => {
         console.log('join_channel', JSON.stringify(data));
         const { user_id } = data;
+        const channel = `roll-${user_id}`;
 
         // Create a new WebSocket connection to the suburb server
         const suburbUrl = `${SUBURB_HOST}/pubsub/${channel}/listen`;
