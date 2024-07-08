@@ -1,23 +1,35 @@
-# Use official Rust image as the build environment
-FROM rust:latest AS build
+# Use the official Rust image as the base
+FROM rust:latest AS builder
 
-# Create a new directory for the application
+# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy the project files
-COPY . .
+# Copy the Cargo.toml and Cargo.lock files
+COPY Cargo.toml Cargo.lock ./
+
+# Copy the source code
+COPY src ./src
 
 # Build the project
 RUN cargo build --release
 
-# Use a minimal base image for the final image
+# Use a minimal image to run the application
 FROM debian:buster-slim
 
-# Copy the built binary from the build stage
-COPY --from=build /usr/src/app/target/release/websocket_proxy /usr/local/bin/websocket_proxy
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Set the startup command
-CMD ["websocket_proxy"]
+# Copy the built binary from the builder stage
+COPY --from=builder /usr/src/app/target/release/websocket_proxy .
 
-# Expose the port
-EXPOSE 3030
+# Expose the port that the application will run on
+EXPOSE $PORT
+
+# Set environment variables
+ENV SUBURB_HOST $SUBURB_HOST
+ENV SUBURB_TOKEN $SUBURB_TOKEN
+ENV ORIGIN_SOURCE $ORIGIN_SOURCE
+ENV PORT $PORT
+
+# Run the application
+CMD ["./websocket_proxy"]
