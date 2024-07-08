@@ -17,8 +17,10 @@ export default defineConfig({
 				ws: true,
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/rolls/, ''),
-				onProxyReqWs: (proxyReq, req, socket, options, head) => {
-					proxyReq.setHeader('authorization', `${process.env.SUBURB_TOKEN}`);
+				configure: (proxy, options) => {
+					proxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+						proxyReq.setHeader('authorization', `${process.env.SUBURB_TOKEN}`);
+					});
 				}
 			}
 		}
