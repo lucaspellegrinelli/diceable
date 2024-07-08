@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from logging import LogRecord
@@ -32,9 +33,10 @@ class SuburbLogHandler(logging.Handler):
 
     def emit(self, record: LogRecord):
         log_entry = self.format(record)
-        data = {"source": self.source, "level": self.level, "message": log_entry}
+        level_name = logging.getLevelName(record.levelno)
+        data = {"source": self.source, "level": level_name, "message": log_entry}
         url = os.path.join(self.host, "logs", self.namespace)
-        requests.post(url, json=data, headers=self.headers)
+        requests.post(url, data=json.dumps(data), headers=self.headers)
 
 
 def setup_logger(namespace: str, source: str, host: str, api_key: str):
