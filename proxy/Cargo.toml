@@ -1,0 +1,12 @@
+[package]
+name = "proxy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+warp = "0.3"
+tokio-tungstenite = "0.15"
+hyper = "0.14"
+hyper-tls = "0.5"
+futures-util = "0.3"
