@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"log"
@@ -23,7 +22,7 @@ var (
 				requestOrigin = strings.TrimPrefix(requestOrigin, "https://")
 			}
 
-			fmt.Printf("Request origin: %s, Allowed origin: %s\n", requestOrigin, originSource)
+			log.Printf("Request origin: %s, Allowed origin: %s", requestOrigin, originSource)
 			return requestOrigin == originSource
 		},
 	}
@@ -35,13 +34,14 @@ func main() {
 	suburbToken := os.Getenv("SUBURB_TOKEN")
 	originSource := os.Getenv("ORIGIN_SOURCE")
 
-	fmt.Printf("Allowed origins: %s\n", originSource)
+	log.Printf("Allowed origins: %s", originSource)
 
 	if suburbHost == "" || suburbToken == "" || originSource == "" {
 		log.Fatal("Environment variables SUBURB_HOST, SUBURB_TOKEN, and ORIGIN_SOURCE must be set")
 	}
 
 	http.HandleFunc("/rolls/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Handling request for URL: %s", r.URL.Path)
 		handleWebSocketProxy(w, r, suburbHost, suburbToken)
 	})
 
@@ -61,13 +61,16 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 	// Extract the ID from the URL path
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
+		log.Printf("Invalid URL path: %s", r.URL.Path)
 		http.Error(w, "Invalid URL path", http.StatusBadRequest)
 		return
 	}
 	id := pathParts[2]
+	log.Printf("Extracted ID from URL path: %s", id)
 
 	// Define the target URL
 	targetURL := "wss://" + suburbHost + "/pubsub/" + id + "/listen"
+	log.Printf("Target URL: %s", targetURL)
 
 	// Upgrade the incoming request to a WebSocket connection
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -76,6 +79,7 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 		return
 	}
 	defer conn.Close()
+	log.Println("Client connection upgraded to WebSocket")
 
 	// Connect to the target WebSocket server with the authorization header
 	headers := http.Header{}
@@ -88,6 +92,7 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 		return
 	}
 	defer targetConn.Close()
+	log.Println("Connected to target WebSocket server")
 
 	// Proxy messages between the client and the target server
 	proxyWebSocket(conn, targetConn)
@@ -112,10 +117,12 @@ func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 				log.Printf("Error reading from client: %v", err)
 				return
 			}
+			log.Printf("Received message from client: %s", message)
 			if err := targetConn.WriteMessage(messageType, message); err != nil {
 				log.Printf("Error writing to target: %v", err)
 				return
 			}
+			log.Println("Message sent to target")
 		}
 	}()
 
@@ -134,10 +141,12 @@ func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 				log.Printf("Error reading from target: %v", err)
 				return
 			}
+			log.Printf("Received message from target: %s", message)
 			if err := clientConn.WriteMessage(messageType, message); err != nil {
 				log.Printf("Error writing to client: %v", err)
 				return
 			}
+			log.Println("Message sent to client")
 		}
 	}()
 
