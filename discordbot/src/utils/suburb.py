@@ -3,19 +3,17 @@ import os
 from logging import LogRecord
 
 import requests
-from websocket import create_connection
 
 
 class SuburbWebsocket:
     def __init__(self, host: str, token: str):
-        self.host = f"wss://{host}"
+        self.host = f"https://{host}"
         self.token = token
+        self.headers = {"Authorization": self.token}
 
     def publish_message(self, channel: str, message: str):
         url = os.path.join(self.host, "pubsub", channel, "publish")
-        ws = create_connection(url, header=[f"Authorization: {self.token}"])
-        ws.send(message)
-        ws.close()
+        requests.post(url, json={"message": message}, headers=self.headers)
 
 
 class SuburbLogHandler(logging.Handler):
