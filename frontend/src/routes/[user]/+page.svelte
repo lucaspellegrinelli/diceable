@@ -183,7 +183,7 @@
 
 		const channel = `roll-${userToken}`;
 		const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-		const suburbUrl = `${protocol}/${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
+		const suburbUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
 		const socket = new WebSocket(suburbUrl);
 
 		socket.addEventListener('open', function (event) {
