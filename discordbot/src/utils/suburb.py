@@ -8,7 +8,7 @@ from websocket import create_connection
 
 class SuburbWebsocket:
     def __init__(self, host: str, token: str):
-        self.host = host
+        self.host = f"wss://{host}"
         self.token = token
 
     def publish_message(self, channel: str, message: str):
@@ -23,7 +23,7 @@ class SuburbLogHandler(logging.Handler):
         super().__init__()
         self.namespace = namespace
         self.source = source
-        self.host = host
+        self.host = f"https://{host}"
         self.headers = {
             "Authorization": f"{api_key}",
             "Content-Type": "application/json",
