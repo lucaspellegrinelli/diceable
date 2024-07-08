@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from logging import LogRecord
@@ -13,9 +12,9 @@ class SuburbWebsocket:
         self.token = token
 
     def publish_message(self, channel: str, message: str):
-        url = os.path.join(self.host, "pubsub", "publish")
+        url = os.path.join(self.host, "pubsub", channel, "publish")
         ws = create_connection(url, header=[f"Authorization: {self.token}"])
-        ws.send(json.dumps({"channel": channel, "message": message}))
+        ws.send(message)
         ws.close()
 
 
