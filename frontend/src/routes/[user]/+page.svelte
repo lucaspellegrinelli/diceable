@@ -1,7 +1,3 @@
-<svelte:head>
-	<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
-</svelte:head>
-
 <script>
 	// @ts-nocheck
 	import { getDicePositions } from '$lib/dicePositionCalculator';
@@ -186,11 +182,12 @@
 		};
 
 		const socket = io(env.PUBLIC_SOCKETIO_URL, {
-			withCredentials: true,
+			withCredentials: true
 		});
 
 		socket.on('connect', () => {
 			console.log('Connected to socket.io server');
+			socket.emit('join_channel', { user_id: userToken });
 		});
 
 		socket.on('disconnect', () => {
@@ -209,11 +206,19 @@
 			console.log('Socket.io error', err);
 		});
 
-		socket.on('roll', (data) => {
+		socket.on(`roll-${userToken}`, (data) => {
 			handleMessage(data);
 		});
 	});
 </script>
+
+<svelte:head>
+	<script
+		src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+		integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+		crossorigin="anonymous"
+	></script>
+</svelte:head>
 
 <div id="dice" />
 
