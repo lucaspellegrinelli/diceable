@@ -35,9 +35,8 @@ class SuburbLogHandler(logging.Handler):
     def emit(self, record: LogRecord):
         log_entry = self.format(record)
         data = {"source": self.source, "level": self.level, "message": log_entry}
-        requests.post(
-            f"{self.host}/logs/{self.namespace}", json=data, headers=self.headers
-        )
+        url = os.path.join(self.host, "logs", self.namespace)
+        requests.post(url, json=data, headers=self.headers)
 
 
 def setup_logger(namespace: str, source: str, host: str, api_key: str):
