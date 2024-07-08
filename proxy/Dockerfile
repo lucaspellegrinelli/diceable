@@ -1,33 +1,27 @@
-# Use the official Golang image to build the application
-FROM golang:1.21 AS build
+# Use the official Rust image to build the application
+FROM rust:1.64 AS build
 
 # Set the working directory
 WORKDIR /app
-
-# Copy the go.mod and go.sum files
-COPY go.mod go.sum ./
-
-# Download and cache dependencies
-RUN go mod download
 
 # Copy the source code
 COPY . .
 
 # Build the application
-RUN go build -o websocket-proxy .
+RUN cargo build --release
 
 # Use a minimal base image to run the application
-FROM alpine:latest
+FROM debian:buster-slim
 
 # Set environment variables
 ENV SUBURB_HOST=""
 ENV SUBURB_TOKEN=""
 
 # Install necessary packages
-RUN apk --no-cache add ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy the built application from the previous stage
-COPY --from=build /app/websocket-proxy /usr/local/bin/websocket-proxy
+COPY --from=build /app/target/release/websocket-proxy /usr/local/bin/websocket-proxy
 
 # Expose the port the application will run on
 EXPOSE 3000
