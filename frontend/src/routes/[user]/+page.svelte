@@ -181,9 +181,8 @@
 		};
 
 		const channel = `roll-${userToken}`;
-		const host = window.location.host;
-		const fullUrl = `ws://${host}/rolls/${channel}`;
-		const socket = new WebSocket(fullUrl);
+		const suburbUrl = `/rolls/${channel}`;
+		const socket = new WebSocket(suburbUrl);
 
 		socket.addEventListener('open', function (event) {
 			console.log('WebSocket connection opened:', event);
