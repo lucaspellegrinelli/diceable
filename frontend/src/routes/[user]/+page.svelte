@@ -184,6 +184,8 @@
 		let socket;
 		let reconnectInterval = 5000;
 		let reconnectTimeout;
+		let heartbeatInterval = 30000;
+		let heartbeatTimeout;
 
 		function connectWebSocket() {
 			const channel = `roll-${userToken}`;
@@ -197,22 +199,29 @@
 				if (reconnectTimeout) {
 					clearTimeout(reconnectTimeout);
 				}
+
+				startHeartbeat();
 			});
 
 			socket.addEventListener('message', function (event) {
 				console.log('Message from server:', event.data);
-				const parsedMessage = JSON.parse(event.data);
-				handleMessage(parsedMessage);
+				try {
+					const parsedMessage = JSON.parse(event.data);
+					handleMessage(parsedMessage);
+				} catch (e) {
+					return;
+				}
 			});
 
 			socket.addEventListener('close', function (event) {
 				console.log('WebSocket connection closed:', event);
+				stopHeartbeat();
 				attemptReconnect();
 			});
 
 			socket.addEventListener('error', function (event) {
 				console.error('WebSocket error:', event);
-				socket.close();
+				socket.close(); // Ensure connection is closed on error
 			});
 		}
 
@@ -222,6 +231,23 @@
 				console.log('Reconnecting...');
 				connectWebSocket();
 			}, reconnectInterval);
+		}
+
+		function startHeartbeat() {
+			if (heartbeatTimeout) {
+				clearTimeout(heartbeatTimeout);
+			}
+			heartbeatTimeout = setInterval(() => {
+				if (socket.readyState === WebSocket.OPEN) {
+					socket.send('ping');
+				}
+			}, heartbeatInterval);
+		}
+
+		function stopHeartbeat() {
+			if (heartbeatTimeout) {
+				clearTimeout(heartbeatTimeout);
+			}
 		}
 
 		connectWebSocket();
