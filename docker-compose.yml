@@ -12,15 +12,18 @@ services:
     ports:
       - 6379:6379
 
-  websocket:
+  ws-proxy:
     build:
-      context: ./pubsub
-      dockerfile: Dockerfile.dev
-    container_name: websocket
+      context: ./proxy
+      dockerfile: Dockerfile
+    container_name: ws-proxy
     ports:
       - 5555:5555
     environment:
       - PORT=5555
+      - SUBURB_HOST=
+      - SUBURB_TOKEN=
+      - ORIGIN_SOURCE=
     volumes:
       - ./pubsub:/app
       - /app/node_modules
@@ -31,7 +34,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: bot
     depends_on:
-      - websocket
+      - ws-proxy
       - redis
     environment:
       - REDISHOST=redis
