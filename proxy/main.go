@@ -14,7 +14,17 @@ var (
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			originSource := os.Getenv("ORIGIN_SOURCE")
-			return r.Header.Get("Origin") == originSource
+			requestOrigin := r.Header.Get("Origin")
+
+			// Remove scheme from requestOrigin if it exists
+			if strings.HasPrefix(requestOrigin, "http://") {
+				requestOrigin = strings.TrimPrefix(requestOrigin, "http://")
+			} else if strings.HasPrefix(requestOrigin, "https://") {
+				requestOrigin = strings.TrimPrefix(requestOrigin, "https://")
+			}
+
+			fmt.Printf("Request origin: %s, Allowed origin: %s\n", requestOrigin, originSource)
+			return requestOrigin == originSource
 		},
 	}
 )
