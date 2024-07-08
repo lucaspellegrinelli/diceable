@@ -30,7 +30,7 @@ app.use('/rolls/:id', (req, res) => {
         const suburbUrl = `wss://${suburbHost}/pubsub/${id}/listen`;
         const wsSuburb = new WebSocket(suburbUrl, {
             headers: {
-                'Authorization': `Bearer ${suburbToken}`
+                'Authorization': `${suburbToken}`
             }
         });
 

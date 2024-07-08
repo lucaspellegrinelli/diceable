@@ -1,5 +1,5 @@
 # Use the official Node.js image.
-FROM node:14
+FROM node:14-alpine
 
 # Create and change to the app directory.
 WORKDIR /usr/src/app
