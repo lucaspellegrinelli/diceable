@@ -1,27 +1,20 @@
-FROM golang:1.21 AS build
+# Use a lightweight Node.js image
+FROM node:14-alpine
 
+# Create and change to the app directory
 WORKDIR /app
 
-COPY go.mod go.sum ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-RUN go mod download
+# Install dependencies
+RUN npm install
 
+# Copy the application code
 COPY . .
 
-RUN GOOS=linux GOARCH=amd64 go build -o proxy .
+# Expose the port the app runs on
+EXPOSE 8080
 
-FROM alpine:latest
-
-ENV SUBURB_HOST=""
-ENV SUBURB_TOKEN=""
-ENV ORIGIN_SOURCE=""
-
-RUN apk --no-cache add ca-certificates libc6-compat
-
-COPY --from=build /app/proxy /usr/local/bin/proxy
-
-RUN chmod +x /usr/local/bin/proxy
-
-EXPOSE 3000
-
-CMD ["proxy"]
+# Start the application
+CMD ["node", "server.js"]

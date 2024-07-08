@@ -1,0 +1,14 @@
+{
+  "name": "websocket-proxy",
+  "version": "1.0.0",
+  "description": "A lightweight WebSocket proxy that adds an API key to the request",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1",
+    "url": "^0.11.0",
+    "ws": "^7.4.6"
+  },
+}
