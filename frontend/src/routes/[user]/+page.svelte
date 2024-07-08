@@ -181,31 +181,50 @@
 			}
 		};
 
-		const channel = `roll-${userToken}`;
-		const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-		const suburbUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
-		const socket = new WebSocket(suburbUrl);
+		let socket;
+		let reconnectInterval = 5000;
+		let reconnectTimeout;
 
-		socket.addEventListener('open', function (event) {
-			console.log('WebSocket connection opened:', event);
-		});
+		function connectWebSocket() {
+			const channel = `roll-${userToken}`;
+			const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+			const suburbUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
+			socket = new WebSocket(suburbUrl);
 
-		// Event listener for receiving messages from the server
-		socket.addEventListener('message', function (event) {
-			console.log('Message from server:', event.data);
-			const parsedMessage = JSON.parse(event.data);
-			handleMessage(parsedMessage);
-		});
+			socket.addEventListener('open', function (event) {
+				console.log('WebSocket connection opened:', event);
 
-		// Event listener for when the connection is closed
-		socket.addEventListener('close', function (event) {
-			console.log('WebSocket connection closed:', event);
-		});
+				if (reconnectTimeout) {
+					clearTimeout(reconnectTimeout);
+				}
+			});
 
-		// Event listener for errors
-		socket.addEventListener('error', function (event) {
-			console.error('WebSocket error:', event);
-		});
+			socket.addEventListener('message', function (event) {
+				console.log('Message from server:', event.data);
+				const parsedMessage = JSON.parse(event.data);
+				handleMessage(parsedMessage);
+			});
+
+			socket.addEventListener('close', function (event) {
+				console.log('WebSocket connection closed:', event);
+				attemptReconnect();
+			});
+
+			socket.addEventListener('error', function (event) {
+				console.error('WebSocket error:', event);
+				socket.close();
+			});
+		}
+
+		function attemptReconnect() {
+			console.log(`Attempting to reconnect in ${reconnectInterval / 1000} seconds...`);
+			reconnectTimeout = setTimeout(() => {
+				console.log('Reconnecting...');
+				connectWebSocket();
+			}, reconnectInterval);
+		}
+
+		connectWebSocket();
 	});
 </script>
 
