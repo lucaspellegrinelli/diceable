@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/gorilla/websocket"
-	"github.com/rs/cors"
 )
 
 var (
@@ -19,6 +19,8 @@ func main() {
 	suburbHost := os.Getenv("SUBURB_HOST")
 	suburbToken := os.Getenv("SUBURB_TOKEN")
 	originSource := os.Getenv("ORIGIN_SOURCE")
+
+	fmt.Printf("Allowed origins: %s\n", originSource)
 
 	if suburbHost == "" || suburbToken == "" || originSource == "" {
 		log.Fatal("Environment variables SUBURB_HOST, SUBURB_TOKEN, and ORIGIN_SOURCE must be set")

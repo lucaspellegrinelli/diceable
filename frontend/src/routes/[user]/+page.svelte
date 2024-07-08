@@ -188,8 +188,6 @@
 
 		socket.addEventListener('open', function (event) {
 			console.log('WebSocket connection opened:', event);
-			// Send a message to the server
-			socket.send('Hello Server!');
 		});
 
 		// Event listener for receiving messages from the server
