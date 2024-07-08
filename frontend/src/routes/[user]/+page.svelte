@@ -181,44 +181,33 @@
 			}
 		};
 
-		const socket = io(env.PUBLIC_SOCKETIO_URL, {
-			withCredentials: true
+		const channel = `roll-${userToken}`;
+		const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+		const suburbUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
+		const socket = new WebSocket(suburbUrl);
+
+		socket.addEventListener('open', function (event) {
+			console.log('WebSocket connection opened:', event);
 		});
 
-		socket.on('connect', () => {
-			console.log('Connected to socket.io server');
-			socket.emit('join_channel', { user_id: userToken });
+		// Event listener for receiving messages from the server
+		socket.addEventListener('message', function (event) {
+			console.log('Message from server:', event.data);
+			const parsedMessage = JSON.parse(event.data);
+			handleMessage(parsedMessage);
 		});
 
-		socket.on('disconnect', () => {
-			console.log('Disconnected from socket.io server');
+		// Event listener for when the connection is closed
+		socket.addEventListener('close', function (event) {
+			console.log('WebSocket connection closed:', event);
 		});
 
-		socket.on('connect_error', (err) => {
-			console.log('Connection error', err);
-		});
-
-		socket.on('connect_timeout', (err) => {
-			console.log('Connection timeout', err);
-		});
-
-		socket.on('error', (err) => {
-			console.log('Socket.io error', err);
-		});
-
-		socket.on(`roll-${userToken}`, (data) => {
-			handleMessage(data);
+		// Event listener for errors
+		socket.addEventListener('error', function (event) {
+			console.error('WebSocket error:', event);
 		});
 	});
 </script>
-
-<svelte:head>
-	<script
-		src="https://cdn.socket.io/4.6.0/socket.io.min.js"
-		integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
-		crossorigin="anonymous"
-	></script>
-</svelte:head>
 
 <div id="dice" />
 
