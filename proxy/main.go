@@ -11,7 +11,12 @@ import (
 )
 
 var (
-	upgrader = websocket.Upgrader{}
+	upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			originSource := os.Getenv("ORIGIN_SOURCE")
+			return r.Header.Get("Origin") == originSource
+		},
+	}
 )
 
 func main() {
