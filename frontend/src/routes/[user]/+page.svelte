@@ -182,7 +182,8 @@
 		};
 
 		const channel = `roll-${userToken}`;
-		const suburbUrl = `/rolls/pubsub/${channel}/listen`;
+		// const suburbUrl = `/rolls/pubsub/${channel}/listen`;
+		const suburbUrl = `/rolls`;
 		const suburbSocket = new WebSocket(suburbUrl);
 
 		suburbSocket.on('open', () => {
@@ -204,14 +205,6 @@
 		});
 	});
 </script>
-
-<svelte:head>
-	<script
-		src="https://cdn.socket.io/4.6.0/socket.io.min.js"
-		integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
-		crossorigin="anonymous"
-	></script>
-</svelte:head>
 
 <div id="dice" />
 
