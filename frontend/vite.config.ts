@@ -1,8 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export default defineConfig({
 	server: {
@@ -10,19 +7,6 @@ export default defineConfig({
 		watch: {
 			usePolling: true,
 			interval: 100
-		},
-		proxy: {
-			'/rolls': {
-				target: `wss://${process.env.SUBURB_HOST}/pubsub`,
-				ws: true,
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/rolls/, '') + '/listen',
-				configure: (proxy, options) => {
-					proxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
-						proxyReq.setHeader('authorization', `${process.env.SUBURB_TOKEN}`);
-					});
-				}
-			}
 		}
 	},
 	preview: {
