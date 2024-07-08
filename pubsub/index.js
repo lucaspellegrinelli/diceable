@@ -3,13 +3,22 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const WebSocket = require('ws');
+const cors = require('cors');
+
+const allowedOrigins = ['https://bot.togarashi.app', 'http://localhost:3000'];
 
 const app = express();
 const server = http.createServer(app);
 
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+
 const io = socketIo(server, {
     cors: {
-        origin: ['https://bot.togarashi.app', 'http://localhost:3000'],
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
         credentials: true
     }
