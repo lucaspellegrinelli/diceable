@@ -181,33 +181,26 @@
 			}
 		};
 
-		const socket = io(env.PUBLIC_SOCKETIO_URL, {
-			withCredentials: true
+		const channel = `roll-${userToken}`;
+		const suburbUrl = `/rolls/pubsub/${channel}/listen`;
+		const suburbSocket = new WebSocket(suburbUrl);
+
+		suburbSocket.on('open', () => {
+			console.log(`Connected to suburb server on channel ${channel}`);
 		});
 
-		socket.on('connect', () => {
-			console.log('Connected to socket.io server');
-			socket.emit('join_channel', { user_id: userToken });
+		suburbSocket.on('message', (message) => {
+			console.log(`Message from suburb server on channel ${channel}: ${message}`);
+			const parsedMessage = JSON.parse(message);
+			handleMessage(parsedMessage);
 		});
 
-		socket.on('disconnect', () => {
-			console.log('Disconnected from socket.io server');
+		suburbSocket.on('close', () => {
+			console.log(`Disconnected from suburb server on channel ${channel}`);
 		});
 
-		socket.on('connect_error', (err) => {
-			console.log('Connection error', err);
-		});
-
-		socket.on('connect_timeout', (err) => {
-			console.log('Connection timeout', err);
-		});
-
-		socket.on('error', (err) => {
-			console.log('Socket.io error', err);
-		});
-
-		socket.on(`roll-${userToken}`, (data) => {
-			handleMessage(data);
+		suburbSocket.on('error', (error) => {
+			console.error(`Error on suburb server connection for channel ${channel}:`, error);
 		});
 	});
 </script>
