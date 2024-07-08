@@ -16,6 +16,7 @@ var (
 			originSource := os.Getenv("ORIGIN_SOURCE")
 			requestOrigin := r.Header.Get("Origin")
 
+			// Remove scheme from requestOrigin if it exists
 			if strings.HasPrefix(requestOrigin, "http://") {
 				requestOrigin = strings.TrimPrefix(requestOrigin, "http://")
 			} else if strings.HasPrefix(requestOrigin, "https://") {
@@ -65,8 +66,10 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 	}
 	id := pathParts[2]
 
+	// Define the target URL
 	targetURL := "wss://" + suburbHost + "/pubsub/" + id + "/listen"
 
+	// Upgrade the incoming request to a WebSocket connection
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Failed to upgrade connection: %v", err)
@@ -74,6 +77,7 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 	}
 	defer conn.Close()
 
+	// Connect to the target WebSocket server with the authorization header
 	headers := http.Header{}
 	headers.Add("authorization", suburbToken)
 
@@ -85,6 +89,7 @@ func handleWebSocketProxy(w http.ResponseWriter, r *http.Request, suburbHost, su
 	}
 	defer targetConn.Close()
 
+	// Proxy messages between the client and the target server
 	proxyWebSocket(conn, targetConn)
 }
 
@@ -92,7 +97,8 @@ func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 	done := make(chan struct{})
 
 	go func() {
-		defer close(done)
+		defer clientConn.Close()
+		defer targetConn.Close()
 		for {
 			messageType, message, err := clientConn.ReadMessage()
 			if err != nil {
@@ -104,10 +110,12 @@ func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 				break
 			}
 		}
+		close(done)
 	}()
 
 	go func() {
-		defer close(done)
+		defer clientConn.Close()
+		defer targetConn.Close()
 		for {
 			messageType, message, err := targetConn.ReadMessage()
 			if err != nil {
@@ -119,6 +127,7 @@ func proxyWebSocket(clientConn, targetConn *websocket.Conn) {
 				break
 			}
 		}
+		close(done)
 	}()
 
 	<-done
