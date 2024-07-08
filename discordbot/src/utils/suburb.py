@@ -13,7 +13,7 @@ class SuburbWebsocket:
 
     def publish_message(self, channel: str, message: str):
         url = os.path.join(self.host, "pubsub", channel, "publish")
-        requests.post(url, json={"message": message}, headers=self.headers)
+        requests.post(url, data=message, headers=self.headers)
 
 
 class SuburbLogHandler(logging.Handler):
