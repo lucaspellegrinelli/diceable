@@ -180,9 +180,8 @@
 			}
 		};
 
-		// const channel = `roll-${userToken}`;
-		// const suburbUrl = `/rolls/pubsub/${channel}/listen`;
-		const suburbUrl = `/rolls`;
+		const channel = `roll-${userToken}`;
+		const suburbUrl = `/rolls/${channel}`;
 		const socket = new WebSocket(suburbUrl);
 
 		socket.addEventListener('open', function (event) {
@@ -194,6 +193,8 @@
 		// Event listener for receiving messages from the server
 		socket.addEventListener('message', function (event) {
 			console.log('Message from server:', event.data);
+			const parsedMessage = JSON.parse(event.data);
+			handleMessage(parsedMessage);
 		});
 
 		// Event listener for when the connection is closed

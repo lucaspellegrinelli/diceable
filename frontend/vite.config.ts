@@ -13,10 +13,10 @@ export default defineConfig({
 		},
 		proxy: {
 			'/rolls': {
-				target: `wss://${process.env.SUBURB_HOST}/pubsub/rolls/listen`,
+				target: `wss://${process.env.SUBURB_HOST}/pubsub`,
 				ws: true,
 				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/rolls/, ''),
+				rewrite: (path) => path.replace(/^\/rolls/, '') + '/listen',
 				configure: (proxy, options) => {
 					proxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
 						proxyReq.setHeader('authorization', `${process.env.SUBURB_TOKEN}`);
