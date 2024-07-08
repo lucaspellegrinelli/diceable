@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import { getDicePositions } from '$lib/dicePositionCalculator';
 	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	export let data;
 	const userToken = data.user;
@@ -181,7 +182,8 @@
 		};
 
 		const channel = `roll-${userToken}`;
-		const suburbUrl = `/rolls/${channel}`;
+		const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+		const suburbUrl = `${protocol}/${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
 		const socket = new WebSocket(suburbUrl);
 
 		socket.addEventListener('open', function (event) {
