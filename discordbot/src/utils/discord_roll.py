@@ -95,7 +95,7 @@ async def roll(
 
     pub_content = {
         "server_id": server_id,
-        "user_id": owner_id,
+        "user_id": user_id,
         "channel_id": channel_id,
         "rolls": rolled_dice,
         "sides": sides,
@@ -106,8 +106,9 @@ async def roll(
     config.websocket_publisher.publish_roll(owner_id, pub_content)
     config.logger.info(f"Rolling dice: {pub_content}")
 
+    username = interaction.user.display_name or interaction.user.name
     await interaction.response.send_message(
-        "```yaml\nRolling dice...```",
+        f"```yaml\n{username} rolls the dice...```",
     )
 
     channel = interaction.channel
@@ -128,5 +129,14 @@ async def roll(
     orig_response = await interaction.original_response()
     await asyncio.sleep(4)
 
+    # Delete the rolling message and send final results as new message
+    try:
+        await orig_response.delete()
+    except:
+        pass
+
+    # Get username for the result
+    username = interaction.user.display_name or interaction.user.name
+
     roll_str = _generate_roll_message(rolled_dice, modifier)
-    await orig_response.edit(content=f"```yaml\n{roll_str}```")
+    await channel.send(f"```yaml\n{roll_str} -> {username}```")
