@@ -1,6 +1,6 @@
 import { redisClient } from '$lib/redisConnection';
 import type { DiceConfig, UserConfig } from '$lib/types';
-import { getDefaultDiceConfig, getDefaultConfig } from '../../utils';
+import { getDefaultConfig, getDefaultDiceConfig } from '../../utils';
 
 const diceSideCount: { [key: string]: number } = {
     "d10": 10,
@@ -10,6 +10,11 @@ const diceSideCount: { [key: string]: number } = {
 export async function GET({ params }) {
     const userUUID = params.user;
     const diceSides = params.sides;
+
+    // Validate dice sides
+    if (!(diceSides in diceSideCount)) {
+        return new Response(`Invalid dice sides: ${diceSides}. Supported sides: d10, d20`, { status: 400 });
+    }
 
     let userConfig: string = await redisClient.hGet('user-configs', userUUID);
 
@@ -31,6 +36,12 @@ export async function GET({ params }) {
 export async function POST({ params, request }) {
     const userUUID = params.user;
     const diceSides = params.sides;
+
+    // Validate dice sides
+    if (!(diceSides in diceSideCount)) {
+        return new Response(`Invalid dice sides: ${diceSides}. Supported sides: d10, d20`, { status: 400 });
+    }
+
     const config: DiceConfig = await request.json();
 
     const userExists = await redisClient.hExists('user-configs', userUUID);

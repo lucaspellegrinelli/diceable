@@ -1,7 +1,7 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 
-import Discord from '@auth/core/providers/discord';
 import { env as privEnv } from '$env/dynamic/private';
+import Discord from '@auth/core/providers/discord';
 
 export const handle = SvelteKitAuth({
     providers: [
@@ -21,13 +21,17 @@ export const handle = SvelteKitAuth({
 
             const userDiscordId = account?.providerAccountId;
 
-            fetch(`http://localhost:3000/api/config/${userDiscordId}/new`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
-            });
+            // Initialize user config by trying to GET d10 config, which will create default config if it doesn't exist
+            try {
+                await fetch(`http://localhost:3000/api/config/${userDiscordId}/d10`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to initialize user config:', error);
+            }
 
             return true;
         }
