@@ -64,6 +64,7 @@ async def roll(
     sides: Literal["d10"] | Literal["d20"],
     amount: int,
     modifier: int = 0,
+    as_response: bool = True,
 ):
     server_id = str(interaction.guild_id)
     user_id = str(interaction.user.id)
@@ -107,9 +108,14 @@ async def roll(
     config.logger.info(f"Rolling dice: {pub_content}")
 
     username = interaction.user.display_name or interaction.user.name
-    await interaction.response.send_message(
-        f"```yaml\n{username} rolls the dice...```",
-    )
+    if as_response:
+        message = await interaction.response.send_message(
+            f"```yaml\n{username} rolls the dice...```",
+        )
+    else:
+        message = await interaction.channel.send(
+            f"```yaml\n{username} rolls the dice...```",
+        )
 
     channel = interaction.channel
     await channel.send(
@@ -126,17 +132,17 @@ async def roll(
         delete_after=20,
     )
 
-    orig_response = await interaction.original_response()
     await asyncio.sleep(4)
 
-    # Delete the rolling message and send final results as new message
-    try:
-        await orig_response.delete()
-    except:
-        pass
-
-    # Get username for the result
-    username = interaction.user.display_name or interaction.user.name
-
     roll_str = _generate_roll_message(rolled_dice, modifier)
-    await channel.send(f"```yaml\n{roll_str} -> {username}```")
+    roll_cmd = f"{amount}{sides}"
+    if modifier != 0:
+        roll_cmd += f"+{modifier}"
+
+    if as_response:
+        sent_message = await interaction.original_response()
+        await sent_message.edit(
+            content=f"```yaml\n{roll_str} -> {username} ({roll_cmd})```"
+        )
+    else:
+        await message.edit(content=f"```yaml\n{roll_str} -> {username} ({roll_cmd})```")
