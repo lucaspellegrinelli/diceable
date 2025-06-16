@@ -210,6 +210,7 @@ func initLogger() {
 			"namespace":   "diceable",
 			"environment": "production",
 			"instance":    "cloud",
+			"level":       "debug",
 		}
 		
 		lokiHook := NewLokiHook(lokiURL, lokiUsername, lokiPassword, labels)
