@@ -27,7 +27,7 @@ async function sendToLoki(level: string, message: string, metadata?: any) {
             streams: [
                 {
                     stream: {
-                        service: 'frontend',
+                        service_name: 'frontend',
                         namespace: 'diceable',
                         environment: environment,
                         instance: 'cloud',

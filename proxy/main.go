@@ -206,7 +206,7 @@ func initLogger() {
 	// If Loki is configured, add the custom Loki hook
 	if lokiURL != "" && lokiPassword != "" {
 		labels := map[string]string{
-			"service":     "websocket",
+			"service_name": "websocket",
 			"namespace":   "diceable",
 			"environment": "production",
 			"instance":    "cloud",

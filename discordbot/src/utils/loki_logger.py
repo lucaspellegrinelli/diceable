@@ -86,7 +86,7 @@ def setup_loki_logger():
 
         try:
             labels = {
-                "service": "discord-bot",
+                "service_name": "discord-bot",
                 "namespace": "diceable",
                 "environment": "production",
                 "instance": "cloud",
