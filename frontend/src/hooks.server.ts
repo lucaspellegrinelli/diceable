@@ -20,9 +20,8 @@ const { handle, signIn, signOut } = SvelteKitAuth({
 
             const userDiscordId = account?.providerAccountId;
 
-            // Initialize user config by trying to GET d10 config, which will create default config if it doesn't exist
             try {
-                await fetch(`http://localhost:3000/api/config/${userDiscordId}/d10`, {
+                await fetch(`${privEnv.API_URL}/api/config/${userDiscordId}/d10`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
