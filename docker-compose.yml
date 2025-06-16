@@ -1,9 +1,3 @@
-version: "3.8"
-
-networks:
-  local:
-    driver: bridge
-
 services:
   redis:
     image: redis
@@ -35,15 +29,20 @@ services:
       - ws-proxy
       - redis
     environment:
+      - DISCORD_TOKEN=
+      - LOKI_URL=
+      - LOKI_USERNAME=
+      - LOKI_PASSWORD=
       - REDISHOST=redis
       - REDISPASSWORD=password
       - REDISPORT=6379
       - REDISUSER=default
       - WEBSOCKET_HOST=ws-proxy:5555
-      - DISCORD_TOKEN=
-      - LOKI_URL=
-      - LOKI_USERNAME=
-      - LOKI_PASSWORD=
+      - S3_ACCESS_KEY_ID=
+      - S3_BUCKET=
+      - S3_ENDPOINT=
+      - S3_REGION=
+      - S3_SECRET_ACCESS_KEY=
     volumes:
       - ./discordbot:/app
       - ./discordbot/data:/app/data
@@ -58,14 +57,27 @@ services:
     ports:
       - 3000:3000
     environment:
+      - AUTH_SECRET=secret
+      - AUTH_TRUST_HOST=true
+      - DISCORD_CLIENT_ID=
+      - DISCORD_CLIENT_SECRET=
+      - LOKI_URL=
+      - LOKI_USERNAME=
+      - LOKI_PASSWORD=
+      - PUBLIC_WEBSOCKET_PROXY=localhost:5555
       - REDISHOST=redis
       - REDISPASSWORD=password
       - REDISPORT=6379
       - REDISUSER=default
-      - PUBLIC_WEBSOCKET_PROXY=localhost:5555
-      - LOKI_URL=
-      - LOKI_USERNAME=
-      - LOKI_PASSWORD=
+      - S3_ACCESS_KEY_ID=
+      - S3_BUCKET=
+      - S3_ENDPOINT=
+      - S3_REGION=
+      - S3_SECRET_ACCESS_KEY=
     volumes:
       - ./frontend:/app
       - /app/node_modules
+
+networks:
+  local:
+    driver: bridge
