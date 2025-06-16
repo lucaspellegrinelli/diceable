@@ -1,20 +1,104 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/afiskon/promtail-client/promtail"
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 )
 
 var logger *logrus.Logger
+
+// LokiEntry represents a log entry for Loki
+type LokiEntry struct {
+	Timestamp string `json:"ts"`
+	Line      string `json:"line"`
+}
+
+// LokiStream represents a stream of logs for Loki
+type LokiStream struct {
+	Stream map[string]string `json:"stream"`
+	Values [][]string        `json:"values"`
+}
+
+// LokiPayload represents the payload sent to Loki
+type LokiPayload struct {
+	Streams []LokiStream `json:"streams"`
+}
+
+// LokiHook is a custom logrus hook for Loki
+type LokiHook struct {
+	url      string
+	username string
+	password string
+	labels   map[string]string
+}
+
+func NewLokiHook(url, username, password string, labels map[string]string) *LokiHook {
+	return &LokiHook{
+		url:      url,
+		username: username,
+		password: password,
+		labels:   labels,
+	}
+}
+
+func (hook *LokiHook) Fire(entry *logrus.Entry) error {
+	line, err := entry.String()
+	if err != nil {
+		return err
+	}
+
+	// Create timestamp in nanoseconds since Unix epoch
+	timestamp := fmt.Sprintf("%d", time.Now().UnixNano())
+
+	payload := LokiPayload{
+		Streams: []LokiStream{
+			{
+				Stream: hook.labels,
+				Values: [][]string{
+					{timestamp, line},
+				},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", hook.url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if hook.username != "" && hook.password != "" {
+		req.SetBasicAuth(hook.username, hook.password)
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return nil
+}
+
+func (hook *LokiHook) Levels() []logrus.Level {
+	return logrus.AllLevels
+}
 
 // RollData represents the dice roll information
 type RollData struct {
@@ -119,30 +203,17 @@ func initLogger() {
 	lokiUsername := os.Getenv("LOKI_USERNAME")
 	lokiPassword := os.Getenv("LOKI_PASSWORD")
 	
-	// If Loki is configured, add the Promtail hook
+	// If Loki is configured, add the custom Loki hook
 	if lokiURL != "" && lokiPassword != "" {
-		// Create Promtail client configuration
-		conf := promtail.ClientConfig{
-			PushURL:            lokiURL,
-			Labels:             fmt.Sprintf(`{service="dice-websocket", namespace="diceable", environment="production"}`),
-			BatchWait:          5000, // 5 seconds
-			BatchEntriesNumber: 10000,
+		labels := map[string]string{
+			"service":     "dice-websocket",
+			"namespace":   "diceable",
+			"environment": "production",
 		}
 		
-		// Add basic auth if credentials are provided
-		if lokiUsername != "" && lokiPassword != "" {
-			conf.Username = &lokiUsername
-			conf.Password = &lokiPassword
-		}
-		
-		// Create and add the Promtail hook
-		hook, err := promtail.NewPromtailHook(conf, logger.Level)
-		if err != nil {
-			logger.WithError(err).Warn("Failed to initialize Loki logging, falling back to console only")
-		} else {
-			logger.AddHook(hook)
-			logger.Info("Loki logging initialized successfully")
-		}
+		lokiHook := NewLokiHook(lokiURL, lokiUsername, lokiPassword, labels)
+		logger.AddHook(lokiHook)
+		logger.Info("Loki logging initialized successfully")
 	} else {
 		logger.Warn("Loki not configured (LOKI_URL or LOKI_PASSWORD missing), using console logging only")
 	}
