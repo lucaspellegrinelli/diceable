@@ -1,4 +1,4 @@
-FROM golang:1.21 AS build
+FROM golang:1.22-alpine AS build
 
 WORKDIR /app
 
@@ -8,20 +8,15 @@ RUN go mod download
 
 COPY . .
 
-RUN GOOS=linux GOARCH=amd64 go build -o proxy .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o proxy .
 
-FROM alpine:latest
+FROM gcr.io/distroless/static-debian12
 
-ENV SUBURB_HOST=""
-ENV SUBURB_TOKEN=""
+ENV PORT="5555"
 ENV ORIGIN_SOURCE=""
-
-RUN apk --no-cache add ca-certificates libc6-compat
 
 COPY --from=build /app/proxy /usr/local/bin/proxy
 
-RUN chmod +x /usr/local/bin/proxy
+EXPOSE 5555
 
-EXPOSE 3000
-
-CMD ["proxy"]
+ENTRYPOINT ["/usr/local/bin/proxy"]

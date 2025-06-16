@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 import discord
 import redis
-from utils.suburb import SuburbWebsocket, setup_logger
+from utils.dice_websocket import DiceWebSocketPublisher
+from utils.loki_logger import setup_loki_logger
 
 
 @dataclass
@@ -14,8 +15,7 @@ class EnvVars:
     REDISUSER: str
     REDISPASSWORD: str
     DISCORD_TOKEN: str
-    SUBURB_HOST: str
-    SUBURB_TOKEN: str
+    WEBSOCKET_HOST: str
 
 
 @dataclass
@@ -25,7 +25,7 @@ class BotConfig:
     client: discord.Client
     tree: discord.app_commands.CommandTree
     redis_client: redis.Redis
-    pubsub: SuburbWebsocket
+    websocket_publisher: DiceWebSocketPublisher
 
 
 def setup_config():
@@ -38,15 +38,14 @@ def setup_config():
         REDISUSER=os.getenv("REDISUSER") or raise_error("REDISUSER"),
         REDISPASSWORD=os.getenv("REDISPASSWORD") or raise_error("REDISPASSWORD"),
         DISCORD_TOKEN=os.getenv("DISCORD_TOKEN") or raise_error("DISCORD_TOKEN"),
-        SUBURB_HOST=os.getenv("SUBURB_HOST") or raise_error("SUBURB_HOST"),
-        SUBURB_TOKEN=os.getenv("SUBURB_TOKEN") or raise_error("SUBURB_TOKEN"),
+        WEBSOCKET_HOST=os.getenv("WEBSOCKET_HOST") or raise_error("WEBSOCKET_HOST"),
     )
 
     intents = discord.Intents.default()
     client = discord.Client(intents=intents)
     return BotConfig(
         env=env,
-        logger=setup_logger("diceable", "discord-py", env.SUBURB_HOST, env.SUBURB_TOKEN),
+        logger=setup_loki_logger("discord-py", "diceable"),
         client=client,
         tree=discord.app_commands.CommandTree(client),
         redis_client=redis.Redis(
@@ -55,5 +54,5 @@ def setup_config():
             username=env.REDISUSER,
             password=env.REDISPASSWORD,
         ),
-        pubsub=SuburbWebsocket(env.SUBURB_HOST, env.SUBURB_TOKEN),
+        websocket_publisher=DiceWebSocketPublisher(env.WEBSOCKET_HOST),
     )

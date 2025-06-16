@@ -1,5 +1,4 @@
 import asyncio
-import json
 import random
 from collections.abc import Awaitable as ABCAwaitable
 from typing import Literal
@@ -104,7 +103,7 @@ async def roll(
         "effect": effect_name,
     }
 
-    config.pubsub.publish_message(f"roll-{owner_id}", json.dumps(pub_content))
+    config.websocket_publisher.publish_roll(owner_id, pub_content)
     config.logger.info(f"Rolling dice: {pub_content}")
 
     await interaction.response.send_message(

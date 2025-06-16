@@ -190,8 +190,8 @@
 		function connectWebSocket() {
 			const channel = `roll-${userToken}`;
 			const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-			const suburbUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/rolls/${channel}`;
-			socket = new WebSocket(suburbUrl);
+			const websocketUrl = `${protocol}://${env.PUBLIC_WEBSOCKET_PROXY}/ws/rolls/${channel}`;
+			socket = new WebSocket(websocketUrl);
 
 			socket.addEventListener('open', function (event) {
 				console.log('WebSocket connection opened:', event);

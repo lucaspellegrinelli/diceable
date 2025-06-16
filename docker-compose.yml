@@ -21,12 +21,10 @@ services:
       - 5555:5555
     environment:
       - PORT=5555
-      - SUBURB_HOST=
-      - SUBURB_TOKEN=
-      - ORIGIN_SOURCE=
-    volumes:
-      - ./pubsub:/app
-      - /app/node_modules
+      - ORIGIN_SOURCE=localhost:3000
+      - LOKI_URL=
+      - LOKI_USERNAME=
+      - LOKI_PASSWORD=
 
   bot:
     build:
@@ -41,6 +39,11 @@ services:
       - REDISPASSWORD=password
       - REDISPORT=6379
       - REDISUSER=default
+      - WEBSOCKET_HOST=ws-proxy:5555
+      - DISCORD_TOKEN=
+      - LOKI_URL=
+      - LOKI_USERNAME=
+      - LOKI_PASSWORD=
     volumes:
       - ./discordbot:/app
       - ./discordbot/data:/app/data
@@ -59,6 +62,10 @@ services:
       - REDISPASSWORD=password
       - REDISPORT=6379
       - REDISUSER=default
+      - PUBLIC_WEBSOCKET_PROXY=localhost:5555
+      - LOKI_URL=
+      - LOKI_USERNAME=
+      - LOKI_PASSWORD=
     volumes:
       - ./frontend:/app
       - /app/node_modules
