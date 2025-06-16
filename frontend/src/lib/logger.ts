@@ -24,15 +24,18 @@ async function sendToLoki(level: string, message: string, metadata?: any) {
         const logMessage = Object.keys(allMetadata).length > 0 ? `${message} ${JSON.stringify(allMetadata)}` : message;
 
         const payload = {
-            streams: [{
-                stream: {
-                    service: 'frontend',
-                    namespace: 'diceable',
-                    environment: environment,
-                    level: level
+            streams: [
+                {
+                    stream: {
+                        service: 'frontend',
+                        namespace: 'diceable',
+                        environment: environment,
+                        instance: 'cloud',
+                        level: level
+                    },
+                    values: [[timestamp, logMessage]],
                 },
-                values: [[timestamp, logMessage]]
-            }]
+            ],
         };
 
         const auth = Buffer.from(`${lokiUsername}:${lokiPassword}`).toString('base64');

@@ -45,7 +45,7 @@ def setup_config():
     client = discord.Client(intents=intents)
     return BotConfig(
         env=env,
-        logger=setup_loki_logger("discord-py", "diceable"),
+        logger=setup_loki_logger(),
         client=client,
         tree=discord.app_commands.CommandTree(client),
         redis_client=redis.Redis(

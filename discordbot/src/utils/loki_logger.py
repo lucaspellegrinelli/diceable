@@ -4,7 +4,7 @@ import os
 from logging_loki import LokiHandler
 
 
-def setup_loki_logger(service_name: str, namespace: str = "diceable"):
+def setup_loki_logger():
     """Setup logger with Loki handler for centralized logging"""
 
     # Loki endpoint configuration from environment variables
@@ -12,7 +12,7 @@ def setup_loki_logger(service_name: str, namespace: str = "diceable"):
     loki_username = os.getenv("LOKI_USERNAME", "default")
     loki_password = os.getenv("LOKI_PASSWORD")
 
-    logger = logging.getLogger(service_name)
+    logger = logging.getLogger("diceable-discord-bot")
 
     # Check if Loki password is provided
     if not loki_password:
@@ -48,16 +48,17 @@ def setup_loki_logger(service_name: str, namespace: str = "diceable"):
             loki_handler = LokiHandler(
                 url=loki_url,
                 tags={
-                    "service": service_name,
-                    "namespace": namespace,
+                    "service": "discord-bot",
+                    "namespace": "diceable",
                     "environment": "production",
+                    "instance": "cloud",
                 },
                 auth=(loki_username, loki_password),
                 version="1",
             )
             loki_handler.setLevel(logging.DEBUG)
             logger.addHandler(loki_handler)
-            logger.info(f"Loki logging initialized for service: {service_name}")
+            logger.info("Loki logging initialized")
         except Exception as e:
             logger.error(f"Failed to initialize Loki handler: {e}")
             logger.warning("Falling back to console logging only")
