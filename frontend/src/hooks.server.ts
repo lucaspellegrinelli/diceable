@@ -1,11 +1,10 @@
-import { SvelteKitAuth } from '@auth/sveltekit';
-
 import { env as privEnv } from '$env/dynamic/private';
 import Discord from '@auth/core/providers/discord';
+import { SvelteKitAuth } from '@auth/sveltekit';
 
-export const handle = SvelteKitAuth({
+const { handle, signIn, signOut } = SvelteKitAuth({
+    trustHost: true,
     providers: [
-        // @ts-expect-error TS Bug
         Discord({
             clientId: privEnv.DISCORD_CLIENT_ID,
             clientSecret: privEnv.DISCORD_CLIENT_SECRET
@@ -37,3 +36,6 @@ export const handle = SvelteKitAuth({
         }
     }
 });
+
+export { handle, signIn, signOut };
+
