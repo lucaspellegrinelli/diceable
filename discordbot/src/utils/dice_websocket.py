@@ -11,7 +11,7 @@ class DiceWebSocketPublisher:
             websocket_host: The host of the dice WebSocket service (e.g., "ws-proxy:3000")
         """
         self.host = f"http://{websocket_host}"
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger("diceable-discord-bot")
 
     def publish_roll(self, user_id: str, roll_data: dict):
         """Publish dice roll data to the WebSocket service
