@@ -7,7 +7,6 @@
 	import type { PageData } from './$types';
 	import { currentSides } from '$lib/stores';
 	import { Separator } from '$lib/components/ui/separator';
-
 	export let data: PageData;
 
 	let obsTutorialModal = false;
@@ -22,6 +21,8 @@
 		obsLink = `https://${currentHost}/${data.user}`;
 	});
 </script>
+
+
 
 <div class="mb-6 space-y-6">
 	<div>

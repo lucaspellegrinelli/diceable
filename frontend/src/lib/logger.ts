@@ -1,71 +1,73 @@
-import winston from 'winston';
-import LokiTransport from 'winston-loki';
+// Unified Loki sender that works in both server and browser environments
+async function sendToLoki(level: string, message: string, metadata?: any) {
+    // Check if we're in a server environment (Node.js)
+    const isServer = typeof process !== 'undefined' && process.env;
 
-// Get Loki configuration from environment variables
-const lokiUrl = process.env.LOKI_URL || '';
-const lokiUsername = process.env.LOKI_USERNAME || '';
-const lokiPassword = process.env.LOKI_PASSWORD;
+    if (!isServer) {
+        // In browser: Loki logging not supported (no secure way to get credentials)
+        return;
+    }
 
-const transports: winston.transport[] = [
-    // Console transport for development
-    new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        )
-    })
-];
+    const lokiUrl = process.env.LOKI_URL;
+    const lokiUsername = process.env.LOKI_USERNAME;
+    const lokiPassword = process.env.LOKI_PASSWORD;
 
-// Only add Loki transport if password is provided
-if (lokiPassword) {
-    const lokiTransport = new LokiTransport({
-        host: lokiUrl,
-        basicAuth: `${lokiUsername}:${lokiPassword}`,
-        labels: {
-            service: 'frontend',
-            namespace: 'diceable',
-            environment: 'production'
-        },
-        json: true,
-        format: winston.format.json(),
-        replaceTimestamp: true,
-        onConnectionError: (err: any) => console.error('Loki connection error:', err)
-    });
+    if (!lokiPassword) return;
 
-    transports.push(lokiTransport);
-} else {
-    console.warn('LOKI_PASSWORD environment variable not set. Loki logging will be disabled.');
+    try {
+        // Detect environment
+        const isProduction = process.env.NODE_ENV === 'production';
+        const environment = isProduction ? 'production' : 'development';
+
+        const timestamp = (Date.now() * 1000000).toString();
+        const allMetadata = metadata || {};
+        const logMessage = Object.keys(allMetadata).length > 0 ? `${message} ${JSON.stringify(allMetadata)}` : message;
+
+        const payload = {
+            streams: [{
+                stream: {
+                    service: 'frontend',
+                    namespace: 'diceable',
+                    environment: environment,
+                    level: level
+                },
+                values: [[timestamp, logMessage]]
+            }]
+        };
+
+        const auth = Buffer.from(`${lokiUsername}:${lokiPassword}`).toString('base64');
+
+        await fetch(lokiUrl!, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${auth}`
+            },
+            body: JSON.stringify(payload)
+        });
+    } catch (error) {
+        // Silently fail - Loki logging is optional
+    }
 }
 
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.errors({ stack: true }),
-        winston.format.json()
-    ),
-    transports: transports
-});
-
-// Wrapper functions for easier usage
+// Simple logging functions that log to console and Loki
 export const logInfo = (message: string, meta?: any) => {
-    logger.info(message, meta);
+    console.info(`[INFO] ${message}`, meta || '');
+    sendToLoki('info', message, meta);
 };
 
 export const logError = (message: string, error?: Error, meta?: any) => {
-    if (error) {
-        logger.error(message, { ...meta, error: error.message, stack: error.stack });
-    } else {
-        logger.error(message, meta);
-    }
+    const errorMeta = error ? { ...meta, error: error.message, stack: error.stack } : meta;
+    console.error(`[ERROR] ${message}`, errorMeta || '');
+    sendToLoki('error', message, errorMeta);
 };
 
 export const logWarn = (message: string, meta?: any) => {
-    logger.warn(message, meta);
+    console.warn(`[WARN] ${message}`, meta || '');
+    sendToLoki('warn', message, meta);
 };
 
 export const logDebug = (message: string, meta?: any) => {
-    logger.debug(message, meta);
-};
-
-export default logger; 
+    console.debug(`[DEBUG] ${message}`, meta || '');
+    sendToLoki('debug', message, meta);
+}; 
