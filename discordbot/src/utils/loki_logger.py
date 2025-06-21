@@ -26,7 +26,7 @@ class LokiHandler(logging.Handler):
         """Send log record to Loki"""
         try:
             log_message = self.format(record)
-            timestamp = str(int(time.time() * 1000000000))
+            timestamp = str(time.time_ns())
             payload = {
                 "streams": [
                     {"stream": self.labels, "values": [[timestamp, log_message]]}
@@ -48,14 +48,14 @@ def setup_loki_logger():
     """Setup logger with custom Loki handler for centralized logging"""
 
     loki_url = os.getenv("LOKI_URL", "")
-    loki_username = os.getenv("LOKI_USERNAME", "")
-    loki_password = os.getenv("LOKI_PASSWORD", "")
+    telemetry_username = os.getenv("TELEMETRY_USERNAME", "")
+    telemetry_password = os.getenv("TELEMETRY_PASSWORD", "")
 
     logger = logging.getLogger("diceable-discord-bot")
 
-    if not loki_password:
+    if not telemetry_password:
         logger.warning(
-            "LOKI_PASSWORD environment variable not set. Loki logging will be disabled."
+            "TELEMETRY_PASSWORD environment variable not set. Loki logging will be disabled."
         )
         # Setup console-only logging
         if not logger.hasHandlers():
@@ -95,8 +95,8 @@ def setup_loki_logger():
 
             loki_handler = LokiHandler(
                 url=loki_url,
-                username=loki_username,
-                password=loki_password,
+                username=telemetry_username,
+                password=telemetry_password,
                 labels=labels,
             )
             loki_handler.setLevel(logging.DEBUG)

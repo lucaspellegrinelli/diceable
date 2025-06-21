@@ -107,6 +107,10 @@ async def roll(
     config.websocket_publisher.publish_roll(owner_id, pub_content)
     config.logger.info(f"Rolling dice: {pub_content}")
 
+    # Record roll metrics
+    if config.metrics:
+        config.metrics.record_roll(sides, amount)
+
     username = interaction.user.display_name or interaction.user.name
     if as_response:
         message = await interaction.response.send_message(
@@ -118,17 +122,27 @@ async def roll(
         )
 
     channel = interaction.channel
-    await channel.send(
-        content="",
-        file=discord.File(
-            create_roll_gif(
+
+    # Time GIF generation
+    if config.metrics:
+        with config.metrics.time_gif_generation(sides, amount):
+            gif_path = create_roll_gif(
                 sides,
                 rolled_dice,
                 palette,
                 save_path=GIF_SAVE_PATH,
-            ),
-            filename="roll.gif",
-        ),
+            )
+    else:
+        gif_path = create_roll_gif(
+            sides,
+            rolled_dice,
+            palette,
+            save_path=GIF_SAVE_PATH,
+        )
+
+    await channel.send(
+        content="",
+        file=discord.File(gif_path, filename="roll.gif"),
         delete_after=20,
     )
 

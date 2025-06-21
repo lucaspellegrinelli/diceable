@@ -9,8 +9,8 @@ async function sendToLoki(level: string, message: string, metadata?: any) {
     }
 
     const lokiUrl = process.env.LOKI_URL;
-    const lokiUsername = process.env.LOKI_USERNAME;
-    const lokiPassword = process.env.LOKI_PASSWORD;
+    const lokiUsername = process.env.TELEMETRY_USERNAME;
+    const lokiPassword = process.env.TELEMETRY_PASSWORD;
 
     if (!lokiPassword) return;
 

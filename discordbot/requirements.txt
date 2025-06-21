@@ -5,3 +5,4 @@ python-dotenv
 redis
 Pillow
 python-socketio[client]
+prometheus_client

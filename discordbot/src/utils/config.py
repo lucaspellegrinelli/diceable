@@ -1,11 +1,13 @@
 import logging
 import os
 from dataclasses import dataclass
+from typing import Optional
 
 import discord
 import redis
 from utils.dice_websocket import DiceWebSocketPublisher
 from utils.loki_logger import setup_loki_logger
+from utils.prometheus_metrics import PrometheusMetrics, setup_prometheus_metrics
 
 
 @dataclass
@@ -26,6 +28,7 @@ class BotConfig:
     tree: discord.app_commands.CommandTree
     redis_client: redis.Redis
     websocket_publisher: DiceWebSocketPublisher
+    metrics: Optional[PrometheusMetrics]
 
 
 def setup_config():
@@ -43,9 +46,21 @@ def setup_config():
 
     intents = discord.Intents.default()
     client = discord.Client(intents=intents)
+
+    # Setup Prometheus metrics
+    metrics = setup_prometheus_metrics()
+    logger = setup_loki_logger()
+
+    if metrics:
+        logger.info("Prometheus metrics initialized")
+    else:
+        logger.warning(
+            "Prometheus metrics not configured - missing PROMETHEUS_URL or TELEMETRY_PASSWORD"
+        )
+
     return BotConfig(
         env=env,
-        logger=setup_loki_logger(),
+        logger=logger,
         client=client,
         tree=discord.app_commands.CommandTree(client),
         redis_client=redis.Redis(
@@ -55,4 +70,5 @@ def setup_config():
             password=env.REDISPASSWORD,
         ),
         websocket_publisher=DiceWebSocketPublisher(env.WEBSOCKET_HOST),
+        metrics=metrics,
     )

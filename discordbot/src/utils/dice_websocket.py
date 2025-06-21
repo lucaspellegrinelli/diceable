@@ -5,21 +5,12 @@ import requests
 
 class DiceWebSocketPublisher:
     def __init__(self, websocket_host: str):
-        """Initialize the dice WebSocket publisher
-
-        Args:
-            websocket_host: The host of the dice WebSocket service (e.g., "ws-proxy:3000")
-        """
-        self.host = f"https://{websocket_host}"
+        """Initialize the dice WebSocket publisher"""
+        self.host = f"http://{websocket_host}"
         self.logger = logging.getLogger("diceable-discord-bot")
 
     def publish_roll(self, user_id: str, roll_data: dict):
-        """Publish dice roll data to the WebSocket service
-
-        Args:
-            user_id: The user ID to send the roll to
-            roll_data: Dictionary containing roll information
-        """
+        """Publish dice roll data to the WebSocket service"""
         url = f"{self.host}/api/roll/{user_id}"
 
         try:
