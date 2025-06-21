@@ -6,7 +6,7 @@ import requests
 class DiceWebSocketPublisher:
     def __init__(self, websocket_host: str):
         """Initialize the dice WebSocket publisher"""
-        self.host = f"http://{websocket_host}"
+        self.host = f"https://{websocket_host}"
         self.logger = logging.getLogger("diceable-discord-bot")
 
     def publish_roll(self, user_id: str, roll_data: dict):
